@@ -3,6 +3,9 @@ A set of python scripts to rename movies and tv shows.
 
 This project is used and tested under Linux and is ideal to be used from something like a Raspberry Pi or a Linux based NAS. If you want to help me to get it to work under Windows, please contribute.
 
+## Run
+Pull the repo, setup config file (see below), change directory into the project folder and run the `./interface.py` script.
+
 ## moviesort
 Detect movie names by querying [themoviedb.org](https://www.themoviedb.org/) API and renaming the file based on a selection of possible matches.
 
