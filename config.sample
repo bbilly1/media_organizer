@@ -1,0 +1,9 @@
+[media]
+tv_downpath = /media/movie/download/tv
+movie_downpath = /media/movie/download/movie
+sortpath = /media/movie/movie/temp
+moviepath = /media/movie/movie-archive
+tvpath = /media/movie/tv
+ext = mp4 mkv avi m4v
+log_file = /home/user/logs/rename.log
+movie_db_api = aaaabbbbccccdddd1111222233333444

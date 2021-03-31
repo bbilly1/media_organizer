@@ -1,0 +1,8 @@
+# python
+__pycache__
+
+# local configuration
+config
+
+# local testing
+deploy.sh
