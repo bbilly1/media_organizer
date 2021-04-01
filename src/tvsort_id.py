@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import requests
+from time import sleep
 
 
 def split_file_name(filename):
@@ -77,11 +78,34 @@ def showname_encoder(showname):
     return encoded
 
 
+def tvmaze_request(url):
+    """ call the api with back_off on rate limit and user-agent """
+    headers = {
+        'User-Agent': 'https://github.com/bbilly1/media_organizer'
+    }
+    # retry up to 5 times
+    for i in range(5):
+        response = requests.get(url, headers=headers)
+        if response.ok:
+            # all good
+            break
+        elif response.status_code == 429:
+            # rate limited
+            print('hit tvmaze rate limiting, slowing down')
+            back_off = (i + 1) ** 2
+            sleep(back_off)
+        else:
+            # all failed
+            print('request failed with url:\n' + url)
+    request = response.json()
+    return request
+
+
 def get_show_id(file_details):
     """ return dict of matches """
     showname = file_details['showname']
     url = 'http://api.tvmaze.com/search/shows?q=' + showname
-    request = requests.get(url).json()
+    request = tvmaze_request(url)
     # loop through results
     all_results = []
     for idx, result in enumerate(request):
@@ -138,7 +162,6 @@ def pick_show_id(all_results):
     return show_id, show_name_clean
 
 
-
 def multi_parser(file_details, show_id):
     """ parse multi episode files names """
     season = file_details['season']
@@ -147,7 +170,7 @@ def multi_parser(file_details, show_id):
     episode_name_list = []
     for episode in episode_list:
         url = f'http://api.tvmaze.com/shows/{show_id}/episodebynumber?season={season}&number={episode}'
-        request = requests.get(url).json()
+        request = tvmaze_request(url)
         episode_name = request['name']
         episode_name_list.append(episode_name)
 
@@ -169,7 +192,7 @@ def get_episode_name(file_details, show_id):
         season = file_details['season']
         episode = file_details['episode']
         url = f'http://api.tvmaze.com/shows/{show_id}/episodebynumber?season={season}&number={episode}'
-        request = requests.get(url).json()
+        request = tvmaze_request(url)
         # returns a dict
         show_response = request
     # date based
@@ -177,7 +200,7 @@ def get_episode_name(file_details, show_id):
         date_raw = file_details['season_id']
         year, month, day = date_raw.split('.')
         url = f'https://api.tvmaze.com/shows/{show_id}/episodesbydate?date={year}-{month}-{day}'
-        request = requests.get(url).json()
+        request = tvmaze_request(url)
         # returns a list
         show_response = request[0]
     # build and return tuple
