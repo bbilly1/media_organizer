@@ -114,7 +114,11 @@ def get_show_id(file_details):
         showname_clean = result['show']['name']
         status = result['show']['status']
         desc_raw = result['show']['summary']
-        desc = re.sub('<[^<]+?>', '', desc_raw)
+        # TODO better html extract method
+        try:
+            desc = re.sub('<[^<]+?>', '', desc_raw)
+        except:
+            desc = desc_raw
         result_dict = {}
         result_dict['list_id'] = list_id
         result_dict['show_id'] = show_id
