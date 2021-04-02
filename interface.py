@@ -4,6 +4,8 @@
 import curses
 import configparser
 import logging
+import sys
+from os import path
 from time import sleep
 
 import src.tvsort as tvsort
@@ -13,9 +15,12 @@ import src.moviesort as moviesort
 
 def get_config():
     """ read out config file and return config dict """
+    # build path
+    root_folder = path.dirname(sys.argv[0])
+    config_path = path.join(root_folder, 'config')
     # parse
     config_parser = configparser.ConfigParser()
-    config_parser.read('config')
+    config_parser.read(config_path)
     # build dict
     config = {}
     config["tv_downpath"] = config_parser.get('media', 'tv_downpath')
