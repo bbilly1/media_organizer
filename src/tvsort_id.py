@@ -244,6 +244,8 @@ def episode_rename(config):
             cache['last_show_name_clean'] = show_name_clean
         # get episode specific details
         season, episode, episode_name = get_episode_name(file_details, show_id)
+        # invalid episode chars
+        episode_name = episode_name.replace('/', '-')
         # build new filename
         ext = os.path.splitext(filename)[1]
         s_clean = season.lstrip('0')
