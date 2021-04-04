@@ -32,7 +32,11 @@ def get_config():
     config["movie_db_api"] = config_parser.get('media', 'movie_db_api')
     # ext
     ext_str = config_parser.get('media', 'ext')
-    config["ext"] = ['.' + i for i in ext_str.split()]   
+    config["ext"] = ['.' + i for i in ext_str.split()]
+    # emby
+    config["emby_url"] = config_parser.get('emby', 'emby_url')
+    config["emby_user_id"] = config_parser.get('emby', 'emby_user_id')
+    config["emby_api_key"] = config_parser.get('emby', 'emby_api_key')
     return config
 
 
