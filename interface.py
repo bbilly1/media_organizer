@@ -11,13 +11,18 @@ from time import sleep
 import src.tvsort as tvsort
 import src.tvsort_id as tvsort_id
 import src.moviesort as moviesort
+import src.db_export as db_export
 
 
 def get_config():
     """ read out config file and return config dict """
     # build path
     root_folder = path.dirname(sys.argv[0])
-    config_path = path.join(root_folder, 'config')
+    if root_folder == '/sbin':
+        # running interactive
+        config_path = 'config'
+    else:
+        config_path = path.join(root_folder, 'config')
     # parse
     config_parser = configparser.ConfigParser()
     config_parser.read(config_path)
@@ -28,7 +33,7 @@ def get_config():
     config["sortpath"] = config_parser.get('media', 'sortpath')
     config["moviepath"] = config_parser.get('media', 'moviepath')
     config["tvpath"] = config_parser.get('media', 'tvpath')
-    config["log_file"] = config_parser.get('media', 'log_file')
+    config["log_folder"] = config_parser.get('media', 'log_folder')
     config["movie_db_api"] = config_parser.get('media', 'movie_db_api')
     # ext
     ext_str = config_parser.get('media', 'ext')
@@ -96,6 +101,8 @@ def sel_handler(menu_item, config):
         moviesort.main(config)
     elif menu_item == 'TV shows':
         tvsort.main(config, tvsort_id)
+    elif menu_item == 'DB export':
+        db_export.main(config)
 
 
 def curses_main(stdscr, menu, config):
@@ -133,9 +140,10 @@ def curses_main(stdscr, menu, config):
 def main():
     """ main wraps the curses menu """
     # setup
-    menu = ['All', 'Movies', 'TV shows', 'Exit']
+    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Exit']
     config = get_config()
-    logging.basicConfig(filename=config["log_file"],level=logging.INFO,format='%(asctime)s:%(message)s')
+    log_file = path.join(config["log_folder"], 'rename.log')
+    logging.basicConfig(filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s')
     # endless loop
     while True:
         pending = get_pending_all(config)

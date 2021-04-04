@@ -5,5 +5,10 @@ sortpath = /media/movie/movie/temp
 moviepath = /media/movie/movie-archive
 tvpath = /media/movie/tv
 ext = mp4 mkv avi m4v
-log_file = /home/user/logs/rename.log
+log_folder = /home/user/logs/media_organize
 movie_db_api = aaaabbbbccccdddd1111222233333444
+
+[emby]
+emby_url = http://media.local:8096/emby
+emby_user_id = aaaa1111bbbb2222cccc3333dddd4444
+emby_api_key = eeee5555ffff6666gggg7777hhhh8888
