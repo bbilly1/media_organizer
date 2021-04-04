@@ -97,6 +97,7 @@ def sel_handler(menu_item, config):
     if menu_item == 'All':
         moviesort.main(config)
         tvsort.main(config, tvsort_id)
+        db_export.main(config)
     elif menu_item == 'Movies':
         moviesort.main(config)
     elif menu_item == 'TV shows':

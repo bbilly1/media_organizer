@@ -20,6 +20,8 @@ Detect tv show filenames by querying the publicly available [tvmaze.com](https:/
 Episodes are named in this style, a more flexible solution is in pending:  
 **{show-name}/Season {nr}/show-name - S{nr}E{nr} - {episode-name}.{ext}**
 
+## db_export
+Export the library to csv files. Calles the Emby API to get a list of movies and episodes and exports this to a convenient set ov CSV files.
 
 ## setup
 ### install
@@ -39,5 +41,9 @@ Duplicate the config.sample file to a file named *config* and set the following 
 * `moviepath`: Root folder where the organized movie files will go.
 * `tvpath`: Root folder where the organized tv episodes will go.
 * `ext`: A space separated list of valid media file extensions to easily filter out none media related files.
-* `log_file`: Path to a file to output all renaming done to keep track and check for any errors.
-* `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).
+* `log_path`: Path to a folder to output all renaming done to keep track and check for any errors and safe csv files.
+* `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).  
+Emby integration:  
+* `emby_url`: url where your emby instance is reachable
+* `emby_user_id`: user id of your emby user
+* `emby_api_key`: api key for your user on emby
