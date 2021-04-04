@@ -196,9 +196,7 @@ def parse_episodes(all_episodes):
 
 def write_episode_files(episode_info_csv, episode_tech_csv, episode_seen, config):
     """ writes the csv files to disk """
-    # log_folder = config['log_folder']
-    log_folder = '/tmp'
-
+    log_folder = config['log_folder']
     # episode info
     episode_info_sorted = sorted(episode_info_csv, key=lambda k: k['file_id'])
     for i in episode_info_sorted:
@@ -211,7 +209,6 @@ def write_episode_files(episode_info_csv, episode_tech_csv, episode_seen, config
         csv_writer = csv.DictWriter(f, fieldnames)
         csv_writer.writeheader()
         csv_writer.writerows(episode_info_sorted)
-
     # episode tech
     episode_tech_csv_sorted = sorted(episode_tech_csv, key=lambda k: k['file_name'])
     file_path = path.join(log_folder, 'episode-tech.csv')
@@ -222,7 +219,6 @@ def write_episode_files(episode_info_csv, episode_tech_csv, episode_seen, config
         csv_writer = csv.DictWriter(f, fieldnames)
         csv_writer.writeheader()
         csv_writer.writerows(episode_tech_csv_sorted)
-    
     # episode by new
     file_path = path.join(log_folder, 'episodenew')
     with open(file_path, 'w') as f:
