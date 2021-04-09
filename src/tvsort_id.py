@@ -139,17 +139,18 @@ def get_show_id(file_details):
     return all_results
 
 
-def pick_show_id(all_results):
+def pick_show_id(all_results, filename):
     """ simple menu to pick matching show manually """
     # more than one possibility
     if len(all_results) > 1:
+        print(f'\nfilename: {filename}')
         # print menu
         for i in all_results:
             list_id = i['list_id']
             showname_clean = i['showname_clean']
             message = f'[{list_id}] {showname_clean}'
             print(message)
-        print('\n[?] show more')
+        print('[?] show more\n')
         # select
         select = input('select: ')
         # long menu with desc
@@ -246,7 +247,7 @@ def episode_rename(config):
         else:
             # not in cache, search
             all_results = get_show_id(file_details)
-            show_id, show_name_clean = pick_show_id(all_results)
+            show_id, show_name_clean = pick_show_id(all_results, filename)
             # update cache
             cache['last_show_name'] = last_show_name.lower()
             cache['last_show_id'] = show_id
