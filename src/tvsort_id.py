@@ -6,6 +6,10 @@ import re
 import requests
 from time import sleep
 
+"""
+Marvel's.Agents.of.S.H.I.E.L.D.S07E01.The.New.Deal.1080p.10bit.AMZN.WEB-DL.AAC5.1.HEVC-Vyndros.mkv
+s.w.a.t.2017.s04e13.720p.web.h264-ggwp.mkv
+"""
 
 def split_file_name(filename):
     """ 
@@ -72,8 +76,13 @@ def split_file_name(filename):
 
 def showname_encoder(showname):
     """ encodes showname for best possible match """
-    encoded = showname.rstrip('.')\
-            .strip().replace(" ", "%20")\
+    # tvmaze doesn't like years in showname
+    showname = showname.strip().rstrip('.')
+    year_pattern = re.compile(r'\(?[0-9]{4}\)?')
+    year = year_pattern.findall(showname)
+    if year:
+        showname = showname.rstrip(str(year))
+    encoded = showname.replace(" ", "%20")\
             .replace(".", "%20").replace("'", "%20")
     return encoded
 
