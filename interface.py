@@ -71,9 +71,9 @@ def get_pending_all(config):
     return pending
 
 
-def print_menu(stdscr, current_row_idx, menu, config):
+def print_menu(stdscr, current_row_idx, menu, config, pending):
     """ print menu with populated pending count """
-    pending = get_pending_all(config)
+    
     # build stdscr
     h, w = stdscr.getmaxyx()
     longest = len(max(menu))
@@ -127,7 +127,8 @@ def curses_main(stdscr, menu, config):
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_WHITE)
     current_row_idx = 0
-    print_menu(stdscr, current_row_idx, menu, config)
+    pending = get_pending_all(config)
+    print_menu(stdscr, current_row_idx, menu, config, pending)
     # endless loop
     while True:
         # wait for exit signal
@@ -147,7 +148,7 @@ def curses_main(stdscr, menu, config):
                 # exit curses and do something
                 return menu_item
             # print
-            print_menu(stdscr, current_row_idx, menu, config)
+            print_menu(stdscr, current_row_idx, menu, config, pending)
             stdscr.refresh()
         except KeyboardInterrupt:
             # clean exit on ctrl + c
