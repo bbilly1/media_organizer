@@ -60,7 +60,7 @@ def get_pending_all(config):
     # call subfunction to collect pending
     pending_movie = moviesort.get_pending(config['movie_downpath'])
     pending_tv = tvsort.get_pending(config['tv_downpath'])
-    pending_trailer = trailers.get_pending(config)
+    pending_trailer = len(trailers.get_pending(config))
     pending_total = pending_movie + pending_tv + pending_trailer
     # build dict
     pending = {}
