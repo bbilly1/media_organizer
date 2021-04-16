@@ -12,6 +12,7 @@ import src.tvsort as tvsort
 import src.tvsort_id as tvsort_id
 import src.moviesort as moviesort
 import src.db_export as db_export
+import src.trailers as trailers
 
 
 def get_config():
@@ -42,6 +43,15 @@ def get_config():
     config["emby_url"] = config_parser.get('emby', 'emby_url')
     config["emby_user_id"] = config_parser.get('emby', 'emby_user_id')
     config["emby_api_key"] = config_parser.get('emby', 'emby_api_key')
+    # youtubedl_ops
+    ydl_opts = dict(config_parser.items('ydl_opts'))
+    # dedect string literals, is there a better way to do that?
+    for key, value in ydl_opts.items():
+        if value.isdigit():
+            ydl_opts[key] = int(value)
+        elif value.lower() in ['true', 'false']:
+            ydl_opts[key] = bool(value)
+    config['ydl_opts'] = ydl_opts
     return config
 
 
@@ -50,11 +60,13 @@ def get_pending_all(config):
     # call subfunction to collect pending
     pending_movie = moviesort.get_pending(config['movie_downpath'])
     pending_tv = tvsort.get_pending(config['tv_downpath'])
-    pending_total = pending_movie + pending_tv
+    pending_trailer = trailers.get_pending(config)
+    pending_total = pending_movie + pending_tv + pending_trailer
     # build dict
     pending = {}
     pending['movies'] = pending_movie
     pending['tv'] = pending_tv
+    pending['trailer'] = pending_trailer
     pending['total'] = pending_total
     return pending
 
@@ -76,8 +88,10 @@ def print_menu(stdscr, current_row_idx, menu, config):
             pending_count = pending['movies']
         elif row == 'TV shows':
             pending_count = pending['tv']
+        elif row == 'Trailer download':
+            pending_count = pending['trailer']
         else:
-            pending_count = 0
+            pending_count = ' '
         # center whole
         y = h // 2 - len(menu) + idx
         # print string to menu
@@ -104,6 +118,8 @@ def sel_handler(menu_item, config):
         tvsort.main(config, tvsort_id)
     elif menu_item == 'DB export':
         db_export.main(config)
+    elif menu_item == 'Trailer download':
+        trailers.main(config)
 
 
 def curses_main(stdscr, menu, config):
@@ -141,7 +157,7 @@ def curses_main(stdscr, menu, config):
 def main():
     """ main wraps the curses menu """
     # setup
-    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Exit']
+    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Trailer download', 'Exit']
     config = get_config()
     log_file = path.join(config["log_folder"], 'rename.log')
     logging.basicConfig(filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s')
