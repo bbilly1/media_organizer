@@ -12,3 +12,9 @@ movie_db_api = aaaabbbbccccdddd1111222233333444
 emby_url = http://media.local:8096/emby
 emby_user_id = aaaa1111bbbb2222cccc3333dddd4444
 emby_api_key = eeee5555ffff6666gggg7777hhhh8888
+
+[ydl_opts]
+format = bestvideo[height<=1080]+bestaudio/best[height<=1080]
+merge_output_format = mkv
+external_downloader = aria2c
+geo_bypass = True

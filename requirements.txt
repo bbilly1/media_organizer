@@ -1,1 +1,3 @@
 request
+trash-cli
+youtube_dl

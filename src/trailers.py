@@ -179,3 +179,4 @@ def main(config):
     if downloaded:
         new_trailers = archive(config)
         print(f'downloaded {len(new_trailers)} new trailers')
+    sleep(2)
