@@ -20,6 +20,9 @@ def incomplete(config):
             file_path = os.path.join(sortpath, file)
             os.path.isfile(file_path)
             subprocess.call(['trash', file_path])
+    if not file_list and not trashed:
+        new_trailers = archive(config)
+        print(f'moved {len(new_trailers)} into archive')
     return trashed
 
 
@@ -119,7 +122,7 @@ def dl_pending(pending, config):
                     log_file = os.path.join(config['log_folder'], 'trailers')
                     with open(log_file, 'a') as f:
                         f.write(f'{to_down_id} {movie_name}\n')
-                    return False
+                    break
                 else:
                     sleep((i + 1) ** 2)
                     continue
