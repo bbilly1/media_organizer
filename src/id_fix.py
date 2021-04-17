@@ -74,9 +74,9 @@ def rename(config, errors_list):
         print('[c]: cancel')
         select = input()
         if select == 0:
+            skipped.append(old_name)
             break
         elif select == 'c':
-            skipped.append(old_name)
             return
         # continue
         for item in rename_files:

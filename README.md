@@ -28,6 +28,9 @@ Downloading trailers from links provided from emby and move them into the movie 
 Trailers are named in this style, a more flexible solution is in pending:  
 **{movie-name} {Year}_{youtube-id}_trailer.mkv**
 
+## bad_id
+Sometimes Emby get's it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
+
 ## setup
 ### install
 These are the none standard Python libraries in use in this project:
