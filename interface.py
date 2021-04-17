@@ -13,6 +13,7 @@ import src.tvsort_id as tvsort_id
 import src.moviesort as moviesort
 import src.db_export as db_export
 import src.trailers as trailers
+import src.id_fix as id_fix
 
 
 def get_config():
@@ -61,12 +62,14 @@ def get_pending_all(config):
     pending_movie = moviesort.get_pending(config['movie_downpath'])
     pending_tv = tvsort.get_pending(config['tv_downpath'])
     pending_trailer = len(trailers.get_pending(config))
-    pending_total = pending_movie + pending_tv + pending_trailer
+    pending_movie_fix = len(id_fix.get_pending(config))
+    pending_total = pending_movie + pending_tv + pending_trailer + pending_movie_fix
     # build dict
     pending = {}
     pending['movies'] = pending_movie
     pending['tv'] = pending_tv
     pending['trailer'] = pending_trailer
+    pending['movie_fix'] = pending_movie_fix
     pending['total'] = pending_total
     return pending
 
@@ -90,6 +93,8 @@ def print_menu(stdscr, current_row_idx, menu, config, pending):
             pending_count = pending['tv']
         elif row == 'Trailer download':
             pending_count = pending['trailer']
+        elif row == 'Fix Movie Names':
+            pending_count = pending['movie_fix']
         else:
             pending_count = ' '
         # center whole
@@ -120,6 +125,8 @@ def sel_handler(menu_item, config):
         db_export.main(config)
     elif menu_item == 'Trailer download':
         trailers.main(config)
+    elif menu_item == 'Fix Movie Names':
+        id_fix.main(config)
 
 
 def curses_main(stdscr, menu, config):
@@ -158,7 +165,7 @@ def curses_main(stdscr, menu, config):
 def main():
     """ main wraps the curses menu """
     # setup
-    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Trailer download', 'Exit']
+    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Trailer download', 'Fix Movie Names' 'Exit']
     config = get_config()
     log_file = path.join(config["log_folder"], 'rename.log')
     logging.basicConfig(filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s')
