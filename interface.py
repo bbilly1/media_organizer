@@ -165,7 +165,7 @@ def curses_main(stdscr, menu, config):
 def main():
     """ main wraps the curses menu """
     # setup
-    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Trailer download', 'Fix Movie Names' 'Exit']
+    menu = ['All', 'Movies', 'TV shows', 'DB export', 'Trailer download', 'Fix Movie Names', 'Exit']
     config = get_config()
     log_file = path.join(config["log_folder"], 'rename.log')
     logging.basicConfig(filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s')
