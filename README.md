@@ -32,7 +32,9 @@ Trailers are named in this style, a more flexible solution is in pending:
 Sometimes Emby get's it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
 
 ## setup
-### install
+Needs Python >= 3.6 to run.
+
+### install requirements
 These are the none standard Python libraries in use in this project:
 * [requests](https://pypi.org/project/requests/)
     * Install on Arch: `sudo pacman -Qi python-request`
@@ -47,11 +49,14 @@ These are the none standard Python libraries in use in this project:
     * Is already installed on most linux based systems.
     * On Windows: `pip install windows-curses`
 
+Or use `pip` to install all the requirements:  
+`pip install -r requirements.txt`
+
 ### config file:
 Duplicate the config.sample file to a file named *config* and set the following variables:
 * `tv_downpath`: Folder path where the tv episodes get downloaded to.
 * `movie_downpath`: Folder path where the movie files get downloaded to.
-* `sortpath`: Empty folder the media_organizer can use to as a temporary sort path.
+* `sortpath`: Empty folder the media_organizer can use as a temporary sort path.
 * `moviepath`: Root folder where the organized movie files will go.
 * `tvpath`: Root folder where the organized tv episodes will go.
 * `ext`: A space separated list of valid media file extensions to easily filter out none media related files.
@@ -59,7 +64,7 @@ Duplicate the config.sample file to a file named *config* and set the following 
 * `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).  
 
 *Emby integration:*  
-* `emby_url`: url where your emby instance is reachable
+* `emby_url`: url where your emby API is reachable
 * `emby_user_id`: user id of your emby user
 * `emby_api_key`: api key for your user on emby  
 
