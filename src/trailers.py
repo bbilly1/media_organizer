@@ -14,13 +14,13 @@ def incomplete(config):
     sortpath = config['sortpath']
     file_list = os.listdir(sortpath)
     trashed = False
-    for file in file_list:
-        if file.endswith('.part') or file.endswith('.ytdl'):
+    for file_name in file_list:
+        if file_name.endswith('.part') or file_name.endswith('.ytdl'):
             trashed = True
-            file_path = os.path.join(sortpath, file)
-            os.path.isfile(file_path)
-            subprocess.call(['trash', file_path])
-    if not file_list and not trashed:
+            file_path = os.path.join(sortpath, file_name)
+            if os.path.isfile(file_path):
+                subprocess.call(['trash', file_path])
+    if file_list and not trashed:
         new_trailers = archive(config)
         print(f'moved {len(new_trailers)} into archive')
     return trashed
@@ -174,6 +174,7 @@ def main(config):
         print(f'downloading {len(pending)} trailers')
         downloaded = dl_pending(pending, config)
     else:
+        downloaded = False
         print('no missing trailers found')
     # move to archive
     if downloaded:
