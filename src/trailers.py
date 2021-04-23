@@ -177,6 +177,7 @@ def main(config):
         downloaded = dl_pending(pending, config)
     else:
         print('no missing trailers found')
+        return
     # move to archive
     if downloaded:
         new_trailers = archive(config)
