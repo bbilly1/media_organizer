@@ -6,10 +6,6 @@ import re
 import requests
 from time import sleep
 
-"""
-Marvel's.Agents.of.S.H.I.E.L.D.S07E01.The.New.Deal.1080p.10bit.AMZN.WEB-DL.AAC5.1.HEVC-Vyndros.mkv
-s.w.a.t.2017.s04e13.720p.web.h264-ggwp.mkv
-"""
 
 def split_file_name(filename):
     """ 
@@ -226,7 +222,7 @@ def get_episode_name(file_details, show_id):
 
 def episode_rename(config):
     """ loops through all files in sortpath """
-    sortpath = config['sortpath']
+    sortpath = config['media']['sortpath']
     # poor man's cache
     cache = {}
     cache['last_show_name'] = None

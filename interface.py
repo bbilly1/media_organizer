@@ -2,7 +2,7 @@
 """ curses interface to lunch moviesort and tvsort """
 
 import curses
-import configparser
+import json
 import logging
 import sys
 from os import path
@@ -22,45 +22,23 @@ def get_config():
     root_folder = path.dirname(sys.argv[0])
     if root_folder == '/sbin':
         # running interactive
-        config_path = 'config'
+        config_path = 'config.json'
     else:
-        config_path = path.join(root_folder, 'config')
+        config_path = path.join(root_folder, 'config.json')
     # parse
-    config_parser = configparser.ConfigParser()
-    config_parser.read(config_path)
-    # build dict
-    config = {}
-    config["tv_downpath"] = config_parser.get('media', 'tv_downpath')
-    config["movie_downpath"] = config_parser.get('media', 'movie_downpath')
-    config["sortpath"] = config_parser.get('media', 'sortpath')
-    config["moviepath"] = config_parser.get('media', 'moviepath')
-    config["tvpath"] = config_parser.get('media', 'tvpath')
-    config["log_folder"] = config_parser.get('media', 'log_folder')
-    config["movie_db_api"] = config_parser.get('media', 'movie_db_api')
-    # ext
-    ext_str = config_parser.get('media', 'ext')
-    config["ext"] = ['.' + i for i in ext_str.split()]
-    # emby
-    config["emby_url"] = config_parser.get('emby', 'emby_url')
-    config["emby_user_id"] = config_parser.get('emby', 'emby_user_id')
-    config["emby_api_key"] = config_parser.get('emby', 'emby_api_key')
-    # youtubedl_ops
-    ydl_opts = dict(config_parser.items('ydl_opts'))
-    # dedect string literals, is there a better way to do that?
-    for key, value in ydl_opts.items():
-        if value.isdigit():
-            ydl_opts[key] = int(value)
-        elif value.lower() in ['true', 'false']:
-            ydl_opts[key] = bool(value)
-    config['ydl_opts'] = ydl_opts
+    with open(config_path, 'r') as config_file:
+        data = config_file.read()
+    config = json.loads(data)
     return config
 
 
 def get_pending_all(config):
     """ figure out what needs to be done """
+    movie_downpath = config['media']['movie_downpath']
+    tv_downpath = config['media']['tv_downpath']
     # call subfunction to collect pending
-    pending_movie = moviesort.get_pending(config['movie_downpath'])
-    pending_tv = tvsort.get_pending(config['tv_downpath'])
+    pending_movie = moviesort.get_pending(movie_downpath)
+    pending_tv = tvsort.get_pending(tv_downpath)
     pending_trailer = len(trailers.get_pending(config))
     pending_movie_fix = len(id_fix.get_pending(config))
     pending_total = pending_movie + pending_tv + pending_trailer + pending_movie_fix
@@ -74,9 +52,8 @@ def get_pending_all(config):
     return pending
 
 
-def print_menu(stdscr, current_row_idx, menu, config, pending):
+def print_menu(stdscr, current_row_idx, menu, pending):
     """ print menu with populated pending count """
-    
     # build stdscr
     h, w = stdscr.getmaxyx()
     longest = len(max(menu))
@@ -137,7 +114,7 @@ def curses_main(stdscr, menu, config):
     curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_WHITE)
     current_row_idx = 0
     pending = get_pending_all(config)
-    print_menu(stdscr, current_row_idx, menu, config, pending)
+    print_menu(stdscr, current_row_idx, menu, pending)
     # endless loop
     while True:
         # wait for exit signal
@@ -157,7 +134,7 @@ def curses_main(stdscr, menu, config):
                 # exit curses and do something
                 return menu_item
             # print
-            print_menu(stdscr, current_row_idx, menu, config, pending)
+            print_menu(stdscr, current_row_idx, menu, pending)
             stdscr.refresh()
         except KeyboardInterrupt:
             # clean exit on ctrl + c
@@ -169,7 +146,8 @@ def main():
     # setup
     menu = ['All', 'Movies', 'TV shows', 'DB export', 'Trailer download', 'Fix Movie Names', 'Exit']
     config = get_config()
-    log_file = path.join(config["log_folder"], 'rename.log')
+    log_folder = config['media']['log_folder']
+    log_file = path.join(log_folder, 'rename.log')
     logging.basicConfig(filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s')
     # endless loop
     while True:

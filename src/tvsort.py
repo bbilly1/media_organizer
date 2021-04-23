@@ -61,17 +61,16 @@ def clean_up(sortpath, tv_downpath):
 def main(config, tvsort_id):
     """ main function to sort tv shows """
     # parse config
-    tv_downpath = config['tv_downpath']
-    tvpath = config['tvpath']
-    sortpath = config['sortpath']
-    ext = config['ext']
+    tv_downpath = config['media']['tv_downpath']
+    tvpath = config['media']['tvpath']
+    sortpath = config['media']['sortpath']
+    ext = config['media']['ext']
     # stop here if nothing to do
     pending = get_pending(tv_downpath)
     if not pending:
         print('no tv shows to sort')
         sleep(2)
         return
-    
     # move files
     to_sort = move_to_sort(tv_downpath, sortpath, ext)
     if to_sort:

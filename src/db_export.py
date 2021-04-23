@@ -7,9 +7,9 @@ import requests
 
 def get_items(config):
     """ get json from emby """
-    emby_url = config['emby_url']
-    emby_user_id = config['emby_user_id']
-    emby_api_key = config['emby_api_key']
+    emby_url = config['emby']['emby_url']
+    emby_user_id = config['emby']['emby_user_id']
+    emby_api_key = config['emby']['emby_api_key']
     # movies
     url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}' +
         '&Recursive=true&IncludeItemTypes=Movie' +
@@ -89,7 +89,7 @@ def parse_movies(all_movies):
 
 def write_movie_files(movie_info_csv, movie_tech_csv, movie_seen, config):
     """ writes the csv files to disk """
-    log_folder = config['log_folder']
+    log_folder = config['media']['log_folder']
 
     # movie info
     movie_info_sorted = sorted(movie_info_csv, key=lambda k: k['movie_name'])
@@ -196,7 +196,7 @@ def parse_episodes(all_episodes):
 
 def write_episode_files(episode_info_csv, episode_tech_csv, episode_seen, config):
     """ writes the csv files to disk """
-    log_folder = config['log_folder']
+    log_folder = config['media']['log_folder']
     # episode info
     episode_info_sorted = sorted(episode_info_csv, key=lambda k: k['file_id'])
     for i in episode_info_sorted:

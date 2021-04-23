@@ -47,8 +47,9 @@ These are the none standard Python libraries in use in this project:
     * Is already installed on most linux based systems.
     * On Windows: `pip install windows-curses`
 
-### config file:
-Duplicate the config.sample file to a file named *config* and set the following variables:
+### config json file:
+Duplicate the config.sample.json file to a file named *config.json* and set the following variables:
+#### media
 * `tv_downpath`: Folder path where the tv episodes get downloaded to.
 * `movie_downpath`: Folder path where the movie files get downloaded to.
 * `sortpath`: Empty folder the media_organizer can use to as a temporary sort path.
@@ -58,10 +59,10 @@ Duplicate the config.sample file to a file named *config* and set the following 
 * `log_path`: Path to a folder to output all renaming done to keep track and check for any errors and safe csv files.
 * `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).  
 
-*Emby integration:*  
+#### Emby integration
 * `emby_url`: url where your emby instance is reachable
 * `emby_user_id`: user id of your emby user
 * `emby_api_key`: api key for your user on emby  
 
-*Trailer download:*  
-Arguments under the [ydl_opts] section will get passed in to youtube-dl. Check out the documentation for details.
+#### ydl_opts *Trailer download:*  
+Arguments under the [ydl_opts] section will get passed in to youtube-dl for *trailers*. Check out the documentation for details.
