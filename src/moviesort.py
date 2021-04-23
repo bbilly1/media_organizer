@@ -22,10 +22,11 @@ def move_to_sort(movie_downpath, sortpath, ext):
     for dirpath, _, filenames in os.walk(movie_downpath):
         for filename in filenames:
             path = os.path.join(dirpath, filename)
-            _, extenstion = os.path.splitext(path)
+            _, extension = os.path.splitext(path)
+            extension = extension.lstrip('.').lower()
             f_size = os.stat(path).st_size
             # TODO: set f_size in config.json
-            if extenstion.lower() in ext and 'sample' not in filename and f_size > 50000000:
+            if extension in ext and 'sample' not in filename and f_size > 50000000:
                 move_to = os.path.join(sortpath, filename)
                 os.rename(path, move_to)
     pending = os.listdir(sortpath)

@@ -55,7 +55,7 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 * `sortpath`: Empty folder the media_organizer can use to as a temporary sort path.
 * `moviepath`: Root folder where the organized movie files will go.
 * `tvpath`: Root folder where the organized tv episodes will go.
-* `ext`: A space separated list of valid media file extensions to easily filter out none media related files.
+* `ext`: A list of valid media file extensions to easily filter out none media related files.
 * `log_path`: Path to a folder to output all renaming done to keep track and check for any errors and safe csv files.
 * `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).  
 

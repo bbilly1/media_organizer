@@ -16,9 +16,10 @@ def move_to_sort(tv_downpath, sortpath, ext):
     for dirpath, _, filenames in os.walk(tv_downpath):
         for filename in filenames:
             path = os.path.join(dirpath, filename)
-            _, extenstion = os.path.splitext(path)
+            _, extension = os.path.splitext(path)
+            extension = extension.lstrip('.').lower()
             f_size = os.stat(path).st_size
-            if extenstion.lower() in ext and 'sample' not in filename and f_size > 50000000:
+            if extension in ext and 'sample' not in filename and f_size > 50000000:
                 move_to = os.path.join(sortpath, filename)
                 os.rename(path, move_to)
     if os.listdir(sortpath):
