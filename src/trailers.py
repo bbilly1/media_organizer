@@ -11,7 +11,7 @@ from time import sleep
 
 def incomplete(config):
     """ search for incomplete downloads and trash them """
-    sortpath = config['sortpath']
+    sortpath = config['media']['sortpath']
     file_list = os.listdir(sortpath)
     trashed = False
     for file_name in file_list:
@@ -28,8 +28,8 @@ def incomplete(config):
 
 def get_local_trailers(config):
     """ gets a list of existing trailers on filesystem """
-    emby_url = config['emby_url']
-    emby_api_key = config['emby_api_key']
+    emby_url = config['emby']['emby_url']
+    emby_api_key = config['emby']['emby_api_key']
     url = (emby_url + '/Trailers?api_key=' + emby_api_key + 
         '&Recursive=True&Fields=Path,MediaStreams')
     r = requests.get(url).json()
@@ -51,8 +51,8 @@ def get_local_trailers(config):
 
 def get_remote_trailers(config):
     """ get a list of available trailers on emby """
-    emby_url = config['emby_url']
-    emby_api_key = config['emby_api_key']
+    emby_url = config['emby']['emby_url']
+    emby_api_key = config['emby']['emby_api_key']
     # remote trailer urls
     url = (emby_url + '/Items?api_key=' + emby_api_key + 
         '&Recursive=True&Fields=LocalTrailerCount,RemoteTrailers,Path&' + 
@@ -73,8 +73,9 @@ def get_remote_trailers(config):
 
 def compare_download(local_trailer_list, remote_trailers_list, config):
     """ figure out which trailers need downloading """
+    log_folder = config['media']['log_folder']
     # failed before
-    log_file = os.path.join(config['log_folder'], 'trailers')
+    log_file = os.path.join(log_folder, 'trailers')
     # check if log file exists
     if not os.path.isfile(log_file):
         # create empty file
@@ -100,7 +101,8 @@ def compare_download(local_trailer_list, remote_trailers_list, config):
 
 def dl_pending(pending, config):
     """ download pending trailers """
-    sortpath = config['sortpath']
+    sortpath = config['media']['sortpath']
+    log_folder = config['media']['loc_folder']
     ydl_opts = config['ydl_opts']
     # loop thrugh list
     downloaded = []
@@ -119,7 +121,7 @@ def dl_pending(pending, config):
             except:
                 if i == 4:
                     # giving up
-                    log_file = os.path.join(config['log_folder'], 'trailers')
+                    log_file = os.path.join(log_folder, 'trailers')
                     with open(log_file, 'a') as f:
                         f.write(f'{to_down_id} {movie_name}\n')
                     break
@@ -134,8 +136,8 @@ def dl_pending(pending, config):
 
 def archive(config):
     """ move downloaded trailers to movie archive """
-    sortpath = config['sortpath']
-    moviepath = config['moviepath']
+    sortpath = config['media']['sortpath']
+    moviepath = config['media']['moviepath']
 
     new_trailers = os.listdir(sortpath)
     # loop through new trailers
@@ -176,6 +178,7 @@ def main(config):
     else:
         downloaded = False
         print('no missing trailers found')
+        return
     # move to archive
     if downloaded:
         new_trailers = archive(config)

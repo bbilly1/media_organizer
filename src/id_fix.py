@@ -9,9 +9,9 @@ from time import sleep
 
 def get_emby_list(config):
     """ get current emby movie list """
-    emby_url = config['emby_url']
-    emby_user_id = config['emby_user_id']
-    emby_api_key = config['emby_api_key']
+    emby_url = config['emby']['emby_url']
+    emby_user_id = config['emby']['emby_user_id']
+    emby_api_key = config['emby']['emby_api_key']
 
     url = (emby_url + '/Users/' + emby_user_id + '/Items?api_key=' + emby_api_key + 
         '&Recursive=True&IncludeItemTypes=Movie&Fields=Path,PremiereDate')
@@ -57,7 +57,7 @@ def compare_list(movie_list):
 def rename(config, errors_list):
     """ rename files with correct names """
     print(f'renaming {len(errors_list)} movies.')
-    moviepath = config['moviepath']
+    moviepath = config['media']['moviepath']
     skipped = []
     for movie in errors_list:
         old_year = movie[0]['year']

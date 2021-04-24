@@ -22,9 +22,11 @@ def move_to_sort(movie_downpath, sortpath, ext):
     for dirpath, _, filenames in os.walk(movie_downpath):
         for filename in filenames:
             path = os.path.join(dirpath, filename)
-            _, extenstion = os.path.splitext(path)
+            _, extension = os.path.splitext(path)
+            extension = extension.lstrip('.').lower()
             f_size = os.stat(path).st_size
-            if extenstion.lower() in ext and 'sample' not in filename and f_size > 50000000:
+            # TODO: set f_size in config.json
+            if extension in ext and 'sample' not in filename and f_size > 50000000:
                 move_to = os.path.join(sortpath, filename)
                 os.rename(path, move_to)
     pending = os.listdir(sortpath)
@@ -197,7 +199,6 @@ def move_to_archive(sortpath, moviepath):
                 print(f'{movie_name}\nalready exists in archive')
                 double = input('[o]: overwrite, [s]: skip and ignore\n')
                 if double == 'o':
-                    import subprocess
                     subprocess.call(["trash", new_folder])
                     os.makedirs(new_folder)
                 elif double == 's':
@@ -236,11 +237,11 @@ def cleanup(movie_downpath, sortpath, renamed):
 def main(config):
     """ main to sort movies """
     # read config
-    movie_downpath = config['movie_downpath']
-    sortpath = config['sortpath']
-    moviepath = config['moviepath']
-    ext = config['ext']
-    movie_db_api = config['movie_db_api']
+    movie_downpath = config['media']['movie_downpath']
+    sortpath = config['media']['sortpath']
+    moviepath = config['media']['moviepath']
+    ext = config['media']['ext']
+    movie_db_api = config['media']['movie_db_api']
     # check if pending
     pending = get_pending(movie_downpath)
     if not pending:

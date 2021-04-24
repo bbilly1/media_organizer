@@ -52,21 +52,22 @@ These are the none standard Python libraries in use in this project:
 Or use `pip` to install all the requirements:  
 `pip install -r requirements.txt`
 
-### config file:
-Duplicate the config.sample file to a file named *config* and set the following variables:
+### config json file:
+Duplicate the config.sample.json file to a file named *config.json* and set the following variables:
+#### media
 * `tv_downpath`: Folder path where the tv episodes get downloaded to.
 * `movie_downpath`: Folder path where the movie files get downloaded to.
 * `sortpath`: Empty folder the media_organizer can use as a temporary sort path.
 * `moviepath`: Root folder where the organized movie files will go.
 * `tvpath`: Root folder where the organized tv episodes will go.
-* `ext`: A space separated list of valid media file extensions to easily filter out none media related files.
+* `ext`: A list of valid media file extensions to easily filter out none media related files.
 * `log_path`: Path to a folder to output all renaming done to keep track and check for any errors and safe csv files.
 * `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).  
 
-*Emby integration:*  
+#### Emby integration
 * `emby_url`: url where your emby API is reachable
 * `emby_user_id`: user id of your emby user
 * `emby_api_key`: api key for your user on emby  
 
-*Trailer download:*  
-Arguments under the [ydl_opts] section will get passed in to youtube-dl. Check out the documentation for details.
+#### ydl_opts *Trailer download:*  
+Arguments under the [ydl_opts] section will get passed in to youtube-dl for *trailers*. Check out the documentation for details.

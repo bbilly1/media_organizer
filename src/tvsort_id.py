@@ -222,7 +222,7 @@ def get_episode_name(file_details, show_id):
 
 def episode_rename(config):
     """ loops through all files in sortpath """
-    sortpath = config['sortpath']
+    sortpath = config['media']['sortpath']
     # poor man's cache
     cache = {}
     cache['last_show_name'] = None
