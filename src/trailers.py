@@ -102,7 +102,7 @@ def compare_download(local_trailer_list, remote_trailers_list, config):
 def dl_pending(pending, config):
     """ download pending trailers """
     sortpath = config['media']['sortpath']
-    log_folder = config['media']['loc_folder']
+    log_folder = config['media']['log_folder']
     ydl_opts = config['ydl_opts']
     # loop thrugh list
     downloaded = []
