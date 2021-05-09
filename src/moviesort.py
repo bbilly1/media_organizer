@@ -227,6 +227,7 @@ def main():
     handler = MovieHandler()
     # check if pending
     if not handler.pending:
+        print('no movies to sort')
         return
     to_rename = handler.move_to_sort()
     # identify
@@ -238,4 +239,5 @@ def main():
     renamed = handler.rename_files(identified)
     if renamed:
         moved = handler.move_to_archive(identified)
+        print(f'renamed {moved} movies')
         handler.cleanup(moved)
