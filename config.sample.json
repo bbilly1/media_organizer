@@ -7,7 +7,8 @@
         "tvpath": "/media/movie/movie/tv",
         "ext": ["mp4", "mkv", "avi", "m4v"],
         "log_folder": "/home/user/logs/media_organize",
-        "movie_db_api": "aaaabbbbccccdddd1111222233333444"
+        "movie_db_api": "aaaabbbbccccdddd1111222233333444",
+        "min_file_size": 50000000
     },
     "emby": {
         "emby_url": "http://media.local:8096/emby",

@@ -34,10 +34,9 @@ def get_config():
 
 def get_pending_all(config):
     """ figure out what needs to be done """
-    movie_downpath = config['media']['movie_downpath']
     tv_downpath = config['media']['tv_downpath']
     # call subfunction to collect pending
-    pending_movie = moviesort.get_pending(movie_downpath)
+    pending_movie = moviesort.MovieHandler().pending
     pending_tv = tvsort.get_pending(tv_downpath)
     pending_trailer = len(trailers.get_pending(config))
     pending_movie_fix = len(id_fix.get_pending(config))
@@ -91,13 +90,13 @@ def print_menu(stdscr, current_row_idx, menu, pending):
 def sel_handler(menu_item, config):
     """ lunch scripts from here based on selection """
     if menu_item == 'All':
-        moviesort.main(config)
+        moviesort.main()
         tvsort.main(config, tvsort_id)
         db_export.main(config)
         trailers.main(config)
         id_fix.main(config)
     elif menu_item == 'Movies':
-        moviesort.main(config)
+        moviesort.main()
     elif menu_item == 'TV shows':
         tvsort.main(config, tvsort_id)
     elif menu_item == 'DB export':
