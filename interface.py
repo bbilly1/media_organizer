@@ -2,11 +2,11 @@
 """ curses interface to lunch moviesort and tvsort """
 
 import curses
-import json
 import logging
-import sys
 from os import path
 from time import sleep
+
+from src.config import get_config
 
 import src.tvsort as tvsort
 import src.tvsort_id as tvsort_id
@@ -14,22 +14,6 @@ import src.moviesort as moviesort
 import src.db_export as db_export
 import src.trailers as trailers
 import src.id_fix as id_fix
-
-
-def get_config():
-    """ read out config file and return config dict """
-    # build path
-    root_folder = path.dirname(sys.argv[0])
-    if root_folder == '/sbin':
-        # running interactive
-        config_path = 'config.json'
-    else:
-        config_path = path.join(root_folder, 'config.json')
-    # parse
-    with open(config_path, 'r') as config_file:
-        data = config_file.read()
-    config = json.loads(data)
-    return config
 
 
 def get_pending_all(config):

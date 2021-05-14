@@ -7,7 +7,7 @@ import subprocess
 
 import requests
 
-from interface import get_config
+from src.config import get_config
 
 
 class MovieHandler():
@@ -54,11 +54,12 @@ class MovieHandler():
         sortpath = self.CONFIG['media']['sortpath']
         renamed = []
         for movie in identified:
+            new_filename = movie.movie_details['new_filename']
             old_file = os.path.join(sortpath, movie.filename)
-            new_file = os.path.join(sortpath, movie.new_filename)
+            new_file = os.path.join(sortpath, new_filename)
             os.rename(old_file, new_file)
             logging.info(
-                'movie:from [%s] to [%s]', movie.filename, movie.new_filename
+                'movie:from [%s] to [%s]', movie.filename, new_filename
             )
             renamed.append(movie.filename)
         return renamed
@@ -70,22 +71,27 @@ class MovieHandler():
         # confirm
         print('\nrenamed:')
         for movie in identified:
-            print(f'from: {movie.filename} \nto: {movie.new_filename}\n')
+            new_filename = movie.movie_details['new_filename']
+            print(f'from: {movie.filename} \nto: {new_filename}\n')
         to_continue = input('\ncontinue? Y/n')
         if to_continue == 'n':
             print('cancle...')
             return False
         moved = []
         for movie in identified:
-            old_file = os.path.join(sortpath, movie.new_filename)
+            new_filename = movie.movie_details['new_filename']
+            year_dedected = movie.movie_details['year_dedected']
+            new_moviename = movie.movie_details['new_moviename']
+            new_filename = movie.movie_details['new_filename']
+            old_file = os.path.join(sortpath, new_filename)
             new_folder = os.path.join(
-                moviepath, str(movie.year), movie.new_moviename
+                moviepath, str(year_dedected), new_moviename
             )
-            new_file = os.path.join(new_folder, movie.new_filename)
+            new_file = os.path.join(new_folder, new_filename)
             try:
                 os.makedirs(new_folder)
             except FileExistsError:
-                print(f'{movie.new_filename}\nalready exists in archive')
+                print(f'{new_filename}\nalready exists in archive')
                 double = input('[o]: overwrite, [s]: skip and ignore\n')
                 if double == 'o':
                     subprocess.call(["trash", new_folder])
@@ -93,7 +99,7 @@ class MovieHandler():
                 elif double == 's':
                     continue
             os.rename(old_file, new_file)
-            moved.append(movie.new_filename)
+            moved.append(new_filename)
         return len(moved)
 
     def cleanup(self, moved):
@@ -127,9 +133,8 @@ class MovieIdentify():
     def __init__(self, filename):
         """ parse filename """
         self.filename = filename
-        self.moviename, self.year, self.file_ext = self.split_filename()
-        self.moviename_encoded = self.encode_moviename()
-        self.new_moviename, self.new_filename = self.get_new_filename()
+        self.file_parsed = self.split_filename()
+        self.movie_details = self.get_new_filename()
 
     def split_filename(self):
         """ build raw values from filename """
@@ -150,24 +155,33 @@ class MovieIdentify():
         else:
             year = year_list[0]
         moviename = self.filename.split(year)[0].rstrip('.')
-        return moviename, int(year), file_ext
+        moviename_encoded = self.encode_moviename(moviename)
+        # build file_parsed dict
+        file_parsed = {}
+        file_parsed['moviename'] = moviename
+        file_parsed['moviename_encoded'] = moviename_encoded
+        file_parsed['year'] = int(year)
+        file_parsed['file_ext'] = file_ext
+        return file_parsed
 
-    def encode_moviename(self):
+    @ staticmethod
+    def encode_moviename(moviename):
         """ url encode and clean the moviename """
-        encoded = self.moviename.lower().replace(' ', '%20')
+        encoded = moviename.lower().replace(' ', '%20')
         encoded = encoded.replace('.', '%20').replace("'", '%20')
         return encoded
 
     def get_results(self):
         """ get all possible matches """
         movie_db_api = self.CONFIG['media']['movie_db_api']
-        year_file = self.year
+        year_file = self.file_parsed['year']
+        moviename_encoded = self.file_parsed['moviename_encoded']
         # try +/- one year
         year_list = [year_file, year_file + 1, year_file - 1]
         for year in year_list:
             url = (
                 'https://api.themoviedb.org/3/search/movie?'
-                + f'api_key={movie_db_api}&query={self.moviename_encoded}'
+                + f'api_key={movie_db_api}&query={moviename_encoded}'
                 + f'&year={year}&language=en-US&include_adult=false'
                 )
             request = requests.get(url).json()
@@ -211,6 +225,7 @@ class MovieIdentify():
 
     def get_new_filename(self):
         """ get the new filename """
+        file_ext = self.file_parsed['file_ext']
         results = self.get_results()
         selection = self.pick_result(results)
         result = results[selection]
@@ -218,8 +233,12 @@ class MovieIdentify():
         year_dedected = result['release_date'].split('-')[0]
         name_dedected = result['title']
         new_moviename = f'{name_dedected} ({year_dedected})'
-        new_filename = f'{new_moviename}{self.file_ext}'
-        return new_moviename, new_filename
+        new_filename = f'{new_moviename}{file_ext}'
+        movie_details = {}
+        movie_details['new_moviename'] = new_moviename
+        movie_details['new_filename'] = new_filename
+        movie_details['year_dedected'] = year_dedected
+        return movie_details
 
 
 def main():
