@@ -62,7 +62,8 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 * `tvpath`: Root folder where the organized tv episodes will go.
 * `ext`: A list of valid media file extensions to easily filter out none media related files.
 * `log_path`: Path to a folder to output all renaming done to keep track and check for any errors and safe csv files.
-* `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).  
+* `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).
+* `min_file_size`: Minimal filesize to be considered a relevant media file in bytes.  
 
 #### Emby integration
 * `emby_url`: url where your emby API is reachable
