@@ -9,7 +9,6 @@ from time import sleep
 from src.config import get_config
 
 import src.tvsort as tvsort
-import src.tvsort_id as tvsort_id
 import src.moviesort as moviesort
 import src.db_export as db_export
 import src.trailers as trailers
@@ -18,10 +17,9 @@ import src.id_fix as id_fix
 
 def get_pending_all(config):
     """ figure out what needs to be done """
-    tv_downpath = config['media']['tv_downpath']
     # call subfunction to collect pending
     pending_movie = moviesort.MovieHandler().pending
-    pending_tv = tvsort.get_pending(tv_downpath)
+    pending_tv = tvsort.TvHandler().pending
     pending_trailer = len(trailers.get_pending(config))
     pending_movie_fix = len(id_fix.get_pending(config))
     pending_total = pending_movie + pending_tv + pending_trailer + pending_movie_fix
@@ -75,14 +73,14 @@ def sel_handler(menu_item, config):
     """ lunch scripts from here based on selection """
     if menu_item == 'All':
         moviesort.main()
-        tvsort.main(config, tvsort_id)
+        tvsort.main()
         db_export.main(config)
         trailers.main(config)
         id_fix.main(config)
     elif menu_item == 'Movies':
         moviesort.main()
     elif menu_item == 'TV shows':
-        tvsort.main(config, tvsort_id)
+        tvsort.main()
     elif menu_item == 'DB export':
         db_export.main(config)
     elif menu_item == 'Trailer download':
