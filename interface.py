@@ -20,7 +20,7 @@ def get_pending_all(config):
     # call subfunction to collect pending
     pending_movie = moviesort.MovieHandler().pending
     pending_tv = tvsort.TvHandler().pending
-    pending_trailer = len(trailers.get_pending(config))
+    pending_trailer = len(trailers.TrailerHandler().pending)
     pending_movie_fix = len(id_fix.get_pending(config))
     pending_total = pending_movie + pending_tv + pending_trailer + pending_movie_fix
     # build dict
@@ -75,7 +75,7 @@ def sel_handler(menu_item, config):
         moviesort.main()
         tvsort.main()
         db_export.main(config)
-        trailers.main(config)
+        trailers.main()
         id_fix.main(config)
     elif menu_item == 'Movies':
         moviesort.main()
@@ -84,7 +84,7 @@ def sel_handler(menu_item, config):
     elif menu_item == 'DB export':
         db_export.main(config)
     elif menu_item == 'Trailer download':
-        trailers.main(config)
+        trailers.main()
     elif menu_item == 'Fix Movie Names':
         id_fix.main(config)
 
