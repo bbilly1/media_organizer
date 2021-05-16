@@ -135,7 +135,7 @@ class TrailerHandler():
         for trailer in new_trailers:
             # build path
             year_pattern = re.compile(r'(\()([0-9]{4})(\))')
-            trailing_reg = r'(.*_)([0-9a-zA-Z-_]{11})(-trailer)$'
+            trailing_reg = r'(.*)(_[0-9a-zA-Z-_]{11}-trailer.mkv)$'
             trailing_pattern = re.compile(trailing_reg)
             movie_name = trailing_pattern.findall(trailer)[0][0]
             year = year_pattern.findall(trailer)[0][1]
