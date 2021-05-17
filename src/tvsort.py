@@ -274,7 +274,7 @@ class Episode():
         # build and return tuple
         season = str(show_response['season']).zfill(2)
         episode = str(show_response['number']).zfill(2)
-        episode_name = show_response['name']
+        episode_name = show_response['name'].replace('/', '-')
         return season, episode, episode_name
 
 
