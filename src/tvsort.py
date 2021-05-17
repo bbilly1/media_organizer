@@ -72,11 +72,11 @@ class Static():
     def showname_encoder(showname):
         """ encodes showname for best possible match """
         # tvmaze doesn't like years in showname
-        showname = showname.strip().rstrip('.')
+        showname = showname.strip().rstrip('-').rstrip('.').strip()
         year_pattern = re.compile(r'\(?[0-9]{4}\)?')
         year = year_pattern.findall(showname)
         if year:
-            showname = showname.rstrip(str(year))
+            showname = showname.rstrip(str(year)).strip()
         encoded = showname.replace(" ", "%20")
         encoded = encoded.replace(".", "%20").replace("'", "%20")
         return encoded
