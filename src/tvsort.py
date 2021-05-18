@@ -311,7 +311,7 @@ class TvHandler():
                         f_size > min_file_size):
                     move_to = os.path.join(sortpath, filename)
                     os.rename(path, move_to)
-        pending = os.listdir(sortpath)
+        pending = sorted(os.listdir(sortpath))
         return pending
 
     def episode_identify(self, to_rename):
@@ -329,6 +329,7 @@ class TvHandler():
             discovered_item['show_id'] = show_id
             self.discovered.append(discovered_item)
             identified.append(episode)
+            print(filename)
         return identified
 
     def episode_rename(self, identified):
@@ -406,5 +407,5 @@ def main():
         renamed = handler.episode_rename(identified)
     if renamed:
         handler.move_to_archive()
-        print(f'renamed {len(renamed)} movies')
+        print(f'renamed {len(renamed)} tv episodes')
         handler.clean_up()
