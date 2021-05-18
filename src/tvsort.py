@@ -355,7 +355,6 @@ class TvHandler():
             os.makedirs(new_folder, exist_ok=True)
             os.rename(old_file, new_file)
             # finish up
-            print(episode.filename)
             renamed.append(new_file)
             logging.info('tv:from [%s] to [%s]', episode.filename, new_file)
         return renamed
