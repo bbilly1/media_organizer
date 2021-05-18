@@ -78,7 +78,7 @@ class Static():
         if year:
             showname = showname.rstrip(str(year)).strip()
         encoded = showname.replace(" ", "%20")
-        encoded = encoded.replace(".", "%20").replace("'", "%20")
+        encoded = encoded.replace(".", "%20").replace("'", "%27")
         return encoded
 
     @staticmethod
