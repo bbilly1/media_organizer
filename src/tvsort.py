@@ -72,13 +72,13 @@ class Static():
     def showname_encoder(showname):
         """ encodes showname for best possible match """
         # tvmaze doesn't like years in showname
-        showname = showname.strip().rstrip('.')
+        showname = showname.strip().rstrip('-').rstrip('.').strip()
         year_pattern = re.compile(r'\(?[0-9]{4}\)?')
         year = year_pattern.findall(showname)
         if year:
-            showname = showname.rstrip(str(year))
+            showname = showname.rstrip(str(year)).strip()
         encoded = showname.replace(" ", "%20")
-        encoded = encoded.replace(".", "%20").replace("'", "%20")
+        encoded = encoded.replace(".", "%20").replace("'", "%27")
         return encoded
 
     @staticmethod
@@ -274,7 +274,7 @@ class Episode():
         # build and return tuple
         season = str(show_response['season']).zfill(2)
         episode = str(show_response['number']).zfill(2)
-        episode_name = show_response['name']
+        episode_name = show_response['name'].replace('/', '-')
         return season, episode, episode_name
 
 
@@ -311,7 +311,7 @@ class TvHandler():
                         f_size > min_file_size):
                     move_to = os.path.join(sortpath, filename)
                     os.rename(path, move_to)
-        pending = os.listdir(sortpath)
+        pending = sorted(os.listdir(sortpath))
         return pending
 
     def episode_identify(self, to_rename):
@@ -329,6 +329,7 @@ class TvHandler():
             discovered_item['show_id'] = show_id
             self.discovered.append(discovered_item)
             identified.append(episode)
+            print(filename)
         return identified
 
     def episode_rename(self, identified):
@@ -354,7 +355,6 @@ class TvHandler():
             os.makedirs(new_folder, exist_ok=True)
             os.rename(old_file, new_file)
             # finish up
-            print(episode.filename)
             renamed.append(new_file)
             logging.info('tv:from [%s] to [%s]', episode.filename, new_file)
         return renamed
@@ -406,5 +406,5 @@ def main():
         renamed = handler.episode_rename(identified)
     if renamed:
         handler.move_to_archive()
-        print(f'renamed {len(renamed)} movies')
+        print(f'renamed {len(renamed)} tv episodes')
         handler.clean_up()
