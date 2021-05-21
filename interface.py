@@ -74,7 +74,7 @@ def sel_handler(menu_item, config):
     if menu_item == 'All':
         moviesort.main()
         tvsort.main()
-        db_export.main(config)
+        db_export.main()
         trailers.main()
         id_fix.main(config)
     elif menu_item == 'Movies':
@@ -82,7 +82,7 @@ def sel_handler(menu_item, config):
     elif menu_item == 'TV shows':
         tvsort.main()
     elif menu_item == 'DB export':
-        db_export.main(config)
+        db_export.main()
     elif menu_item == 'Trailer download':
         trailers.main()
     elif menu_item == 'Fix Movie Names':

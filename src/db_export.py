@@ -2,238 +2,237 @@
 
 import csv
 from os import path
+
 import requests
 
-
-def get_items(config):
-    """ get json from emby """
-    emby_url = config['emby']['emby_url']
-    emby_user_id = config['emby']['emby_user_id']
-    emby_api_key = config['emby']['emby_api_key']
-    # movies
-    url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}' +
-        '&Recursive=true&IncludeItemTypes=Movie' +
-        '&fields=Genres,MediaStreams,Overview,ProviderIds' +
-        '&SortBy=DateCreated&SortOrder=Descending')
-    r = requests.get(url)
-    all_movies = r.json()['Items']
-    # episodes
-    url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}' +
-        '&IncludeItemTypes=Episode&Recursive=true&StartIndex=0' +
-        '&Fields=DateCreated,Genres,MediaStreams,MediaSources,Overview,ProviderIds'
-        '&SortBy=DateCreated&SortOrder=Descending&IsMissing=false')
-
-    r = requests.get(url)
-    all_episodes = r.json()['Items']
-    return all_movies, all_episodes
+from src.config import get_config
 
 
-def parse_movies(all_movies):
-    """ loop through the movies """
-    movie_info_csv = []
-    movie_tech_csv = []
-    movie_seen = []
-    for movie in all_movies:
-        # general
-        movie_name = movie['Name']
-        overview = movie['Overview']
-        imdb = movie['ProviderIds']['Imdb']
-        played = movie['UserData']['Played']
-        genres = ', '.join(movie['Genres'])
-        # media
-        for i in movie['MediaSources']:
-            if i['Protocol'] == 'File':
-                file_name = path.basename(i['Path'])
-                year = path.splitext(file_name)[0][-5:-1]
-                duration_min = round(i['RunTimeTicks'] / 600000000)
-                filesize_MB = round(i['Size'] / 1024 / 1024)
-                for j in i['MediaStreams']:
-                    if j['Type'] == 'Video':
-                        image_width = j['Width']
-                        image_height = j['Height']
-                        avg_bitrate_MB = round(j['BitRate'] / 1024 / 1024, 2)
-                        codec = j['Codec']
-                        # found it
-                        break
-                # found it
-                break
-        # info csv
-        info_dict = {}
-        info_dict['movie_name'] = movie_name
-        info_dict['year'] = year
-        info_dict['imdb'] = imdb
-        info_dict['genres'] = genres
-        info_dict['overview'] = overview
-        info_dict['duration_min'] = duration_min
-        movie_info_csv.append(info_dict)
-        # technical csv
-        tech_dict = {}
-        tech_dict['file_name'] = file_name
-        tech_dict['duration_min'] = duration_min
-        tech_dict['filesize_MB'] = filesize_MB
-        tech_dict['image_width'] = image_width
-        tech_dict['image_height'] = image_height
-        tech_dict['avg_bitrate_MB'] = avg_bitrate_MB
-        tech_dict['codec'] = codec
-        movie_tech_csv.append(tech_dict)
-        # seen or unseen
-        if played == True:
-            icon = '[X]'
-        elif played == False:
-            icon = '[ ]'
-        seen_line = f'{icon} {movie_name} ({year})'
-        movie_seen.append(seen_line)
-    
-    return movie_info_csv, movie_tech_csv, movie_seen
+class DatabaseExport():
+    """ saves database to CSV """
+
+    CONFIG = get_config()
+
+    def __init__(self):
+        self.all_movies, self.all_episodes = self.get_items()
+
+    def get_items(self):
+        """ get json from emby """
+        emby_url = self.CONFIG['emby']['emby_url']
+        emby_user_id = self.CONFIG['emby']['emby_user_id']
+        emby_api_key = self.CONFIG['emby']['emby_api_key']
+        # movies
+        url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}'
+               '&Recursive=true&IncludeItemTypes=Movie'
+               '&fields=Genres,MediaStreams,Overview,'
+               'ProviderIds,Path,RunTimeTicks'
+               '&SortBy=DateCreated&SortOrder=Descending')
+
+        response = requests.get(url)
+        all_movies = response.json()['Items']
+        # episodes
+        url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}'
+               '&IncludeItemTypes=Episode&Recursive=true&StartIndex=0'
+               '&Fields=DateCreated,Genres,MediaStreams,'
+               'MediaSources,Overview,ProviderIds,Path,RunTimeTicks'
+               '&SortBy=DateCreated&SortOrder=Descending&IsMissing=false')
+
+        response = requests.get(url)
+        all_episodes = response.json()['Items']
+        return all_movies, all_episodes
+
+    def parse_movies(self):
+        """ handle the movies """
+        all_movies = self.all_movies
+        # seen
+        movie_seen = ListParser.build_seen(all_movies)
+        self.write_seen(movie_seen, 'movienew')
+        # tech
+        movie_tech = ListParser.build_tech(all_movies)
+        self.write_csv(movie_tech, 'movie-tech.csv')
+        # info
+        movie_info = ListParser.build_movie_info(all_movies)
+        self.write_csv(movie_info, 'movie-info.csv')
+
+    def parse_episodes(self):
+        """ handle the episodes """
+        all_episodes = self.all_episodes
+        # seen
+        episode_seen = ListParser.build_seen(all_episodes)
+        self.write_seen(episode_seen, 'episodenew')
+        # tech
+        episode_tech = ListParser.build_tech(all_episodes)
+        self.write_csv(episode_tech, 'episode-tech.csv')
+        # info
+        episode_info = ListParser.build_episode_info(all_episodes)
+        self.write_csv(episode_info, 'episode-info.csv')
+
+    def write_csv(self, to_write, filename):
+        """ write list of dicts to CSV """
+
+        log_folder = self.CONFIG['media']['log_folder']
+        file_path = path.join(log_folder, filename)
+
+        # open and write
+        with open(file_path, 'w') as f:
+            # take fieldnames from first line
+            fieldnames = to_write[0].keys()
+            csv_writer = csv.DictWriter(f, fieldnames)
+            csv_writer.writeheader()
+            csv_writer.writerows(to_write)
+
+    def write_seen(self, to_write, filename):
+        """ write list of seen """
+        log_folder = self.CONFIG['media']['log_folder']
+        file_path = path.join(log_folder, filename)
+        # movie by new
+        with open(file_path, 'w') as f:
+            for line in to_write:
+                f.write(line + '\n')
 
 
-def write_movie_files(movie_info_csv, movie_tech_csv, movie_seen, config):
-    """ writes the csv files to disk """
-    log_folder = config['media']['log_folder']
+class ListParser():
+    """ static parse the lists from DatabaseExport """
 
-    # movie info
-    movie_info_sorted = sorted(movie_info_csv, key=lambda k: k['movie_name'])
-    file_path = path.join(log_folder, 'movie-info.csv')
-    # open and write
-    with open(file_path, 'w') as f:
-        # take fieldnames from first line
-        fieldnames = movie_info_sorted[0].keys()
-        csv_writer = csv.DictWriter(f, fieldnames)
-        csv_writer.writeheader()
-        csv_writer.writerows(movie_info_sorted)
+    @staticmethod
+    def build_seen(filelist):
+        """ build the seen list """
 
-    # movie tech
-    movie_tech_csv_sorted = sorted(movie_tech_csv, key=lambda k: k['file_name'])
-    file_path = path.join(log_folder, 'movie-tech.csv')
-    # open and write
-    with open(file_path, 'w') as f:
-        # take fieldnames from first line
-        fieldnames = movie_tech_csv_sorted[0].keys()
-        csv_writer = csv.DictWriter(f, fieldnames)
-        csv_writer.writeheader()
-        csv_writer.writerows(movie_tech_csv_sorted)
-    
-    # movie by new
-    file_path = path.join(log_folder, 'movienew')
-    with open(file_path, 'w') as f:
-        for line in movie_seen:
-            f.write(line + '\n')
+        file_item_seen = []
+
+        for file_item in filelist:
+            played = file_item['UserData']['Played']
+            file_name = path.basename(file_item['Path'])
+            file_item_name = path.splitext(file_name)[0]
+            # seen or unseen
+            if played:
+                icon = '[X]'
+            else:
+                icon = '[ ]'
+            seen_line = f'{icon} {file_item_name}'
+            file_item_seen.append(seen_line)
+
+        return file_item_seen
+
+    @staticmethod
+    def build_tech(filelist):
+        """ build tech csv """
+
+        file_item_tech = []
+
+        for file_item in filelist:
+            file_name = path.basename(file_item['Path'])
+            duration_min = round(file_item['RunTimeTicks'] / 600000000)
+            # loop through media sources
+            for i in file_item['MediaSources']:
+                if i['Protocol'] == 'File':
+                    filesize = round(i['Size'] / 1024 / 1024)
+                    for j in i['MediaStreams']:
+                        if j['Type'] == 'Video':
+                            image_width = j['Width']
+                            image_height = j['Height']
+                            avg_bitrate = round(j['BitRate'] / 1024 / 1024, 2)
+                            codec = j['Codec']
+                            # found it
+                            break
+                    # found it
+                    break
+            # technical csv
+            tech_dict = {}
+            tech_dict['file_name'] = file_name
+            tech_dict['duration_min'] = duration_min
+            tech_dict['filesize_MB'] = filesize
+            tech_dict['image_width'] = image_width
+            tech_dict['image_height'] = image_height
+            tech_dict['avg_bitrate_MB'] = avg_bitrate
+            tech_dict['codec'] = codec
+            file_item_tech.append(tech_dict)
+
+        # sort and return
+        file_item_tech_sorted = sorted(
+            file_item_tech, key=lambda k: k['file_name']
+        )
+        return file_item_tech_sorted
+
+    @staticmethod
+    def build_movie_info(all_movies):
+        """ build movie info csv """
+
+        movie_info = []
+
+        for movie in all_movies:
+
+            movie_name = movie['Name']
+            year = movie['Path'].split('/')[3]
+            overview = movie['Overview']
+            imdb = movie['ProviderIds']['Imdb']
+            genres = ', '.join(movie['Genres'])
+            duration_min = round(movie['RunTimeTicks'] / 600000000)
+
+            info_dict = {}
+            info_dict['movie_name'] = movie_name
+            info_dict['year'] = year
+            info_dict['imdb'] = imdb
+            info_dict['genres'] = genres
+            info_dict['overview'] = overview
+            info_dict['duration_min'] = duration_min
+            movie_info.append(info_dict)
+
+        # sort and return
+        movie_info_sorted = sorted(movie_info, key=lambda k: k['movie_name'])
+        return movie_info_sorted
+
+    @staticmethod
+    def build_episode_info(all_episodes):
+        """ build episode info csv """
+
+        episode_info = []
+
+        for episode in all_episodes:
+            episode_name = episode['Name']
+            file_name = path.basename(episode['Path'])
+            try:
+                episode_id = episode['IndexNumber']
+            except KeyError:
+                # not a real episode
+                continue
+            try:
+                overview = episode['Overview'].replace('\n\n', ' ')
+                overview = overview.replace('\n', ' ')
+            except KeyError:
+                overview = 'NA'
+            try:
+                imdb = episode['ProviderIds']['Imdb']
+            except KeyError:
+                imdb = 'NA'
+            genres = ', '.join(episode['Genres'])
+            season_name = episode['SeasonName']
+            series_name = episode['SeriesName']
+            duration_min = round(episode['RunTimeTicks'] / 600000000)
+
+            # info csv
+            info_dict = {}
+            info_dict['series_name'] = series_name
+            info_dict['season_name'] = season_name
+            info_dict['episode_id'] = episode_id
+            info_dict['episode_name'] = episode_name
+            info_dict['file_name'] = file_name
+            info_dict['imdb'] = imdb
+            info_dict['genres'] = genres
+            info_dict['overview'] = overview
+            info_dict['duration_min'] = duration_min
+            episode_info.append(info_dict)
+
+        # sort and return
+        episode_info_sorted = sorted(
+            episode_info, key=lambda k: k['file_name']
+        )
+        return episode_info_sorted
 
 
-def parse_episodes(all_episodes):
-    """ loop through all episodes """
-    episode_info_csv = []
-    episode_tech_csv = []
-    episode_seen = []
-    
-    for episode in all_episodes:
-        if episode['ParentIndexNumber'] == 0:
-            # not a real episode
-            continue
-        # general
-        episode_name = episode['Name']
-        episode_id = episode['IndexNumber']
-        try:
-            overview = episode['Overview'].replace('\n\n', ' ').replace('\n', ' ')
-        except KeyError:
-            overview = 'NA'
-        try:
-            imdb = episode['ProviderIds']['Imdb']
-        except KeyError:
-            imdb = 'NA'
-        played = episode['UserData']['Played']
-        genres = ', '.join(episode['Genres'])
-        season_name = episode['SeasonName']
-        series_name = episode['SeriesName']
-        # media
-        for i in episode['MediaSources']:
-            if i['Protocol'] == 'File':
-                file_name = path.basename(i['Path'])
-                file_id = i['Name']
-                duration_min = round(i['RunTimeTicks'] / 600000000)
-                filesize_MB = round(i['Size'] / 1024 / 1024)
-                for j in i['MediaStreams']:
-                    if j['Type'] == 'Video':
-                        image_width = j['Width']
-                        image_height = j['Height']
-                        avg_bitrate_MB = round(j['BitRate'] / 1024 / 1024, 2)
-                        codec = j['Codec']
-                        # found it
-                        break
-                # found it
-                break
-        # info csv
-        info_dict = {}
-        info_dict['series_name'] = series_name
-        info_dict['file_id'] = file_id
-        info_dict['season_name'] = season_name
-        info_dict['episode_id'] = episode_id
-        info_dict['episode_name'] = episode_name
-        info_dict['imdb'] = imdb
-        info_dict['genres'] = genres
-        info_dict['overview'] = overview
-        info_dict['duration_min'] = duration_min
-        episode_info_csv.append(info_dict)
-        # technical csv
-        tech_dict = {}
-        tech_dict['file_name'] = file_name
-        tech_dict['duration_min'] = duration_min
-        tech_dict['filesize_MB'] = filesize_MB
-        tech_dict['image_width'] = image_width
-        tech_dict['image_height'] = image_height
-        tech_dict['avg_bitrate_MB'] = avg_bitrate_MB
-        tech_dict['codec'] = codec
-        episode_tech_csv.append(tech_dict)
-        # seen or unseen
-        if played == True:
-            icon = '[X]'
-        elif played == False:
-            icon = '[ ]'
-        seen_line = f'{icon} {file_id}'
-        episode_seen.append(seen_line)
-    return episode_info_csv, episode_tech_csv, episode_seen
-
-
-def write_episode_files(episode_info_csv, episode_tech_csv, episode_seen, config):
-    """ writes the csv files to disk """
-    log_folder = config['media']['log_folder']
-    # episode info
-    episode_info_sorted = sorted(episode_info_csv, key=lambda k: k['file_id'])
-    for i in episode_info_sorted:
-        i.pop('file_id', None)
-    file_path = path.join(log_folder, 'episode-info.csv')
-    # open and write
-    with open(file_path, 'w') as f:
-        # take fieldnames from first line
-        fieldnames = episode_info_sorted[0].keys()
-        csv_writer = csv.DictWriter(f, fieldnames)
-        csv_writer.writeheader()
-        csv_writer.writerows(episode_info_sorted)
-    # episode tech
-    episode_tech_csv_sorted = sorted(episode_tech_csv, key=lambda k: k['file_name'])
-    file_path = path.join(log_folder, 'episode-tech.csv')
-    # open and write
-    with open(file_path, 'w') as f:
-        # take fieldnames from first line
-        fieldnames = episode_tech_csv_sorted[0].keys()
-        csv_writer = csv.DictWriter(f, fieldnames)
-        csv_writer.writeheader()
-        csv_writer.writerows(episode_tech_csv_sorted)
-    # episode by new
-    file_path = path.join(log_folder, 'episodenew')
-    with open(file_path, 'w') as f:
-        for line in episode_seen:
-            f.write(line + '\n')
-
-
-def main(config):
-    """ write collection to csv """
+def main():
+    """ main to regenerate csv files """
     print('recreating db files')
-    # get data
-    all_movies, all_episodes = get_items(config)
-    # write movies
-    movie_info_csv, movie_tech_csv, movie_seen = parse_movies(all_movies)
-    write_movie_files(movie_info_csv, movie_tech_csv, movie_seen, config)
-    # write episodes
-    episode_info_csv, episode_tech_csv, episode_seen = parse_episodes(all_episodes)
-    write_episode_files(episode_info_csv, episode_tech_csv, episode_seen, config)
+    export = DatabaseExport()
+    export.parse_movies()
+    export.parse_episodes()
