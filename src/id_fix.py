@@ -75,13 +75,13 @@ class MovieNameFix():
         diff = []
         for num, value in enumerate(str1):
             try:
-                if value not in (str2[num], '-'):
+                if value not in (str2[num], '/'):
                     diff.append(value)
             except IndexError:
                 diff.append(value)
         for num, value in enumerate(str2):
             try:
-                if value not in (str1[num], '/'):
+                if value not in (str1[num], '-'):
                     diff.append(value)
             except IndexError:
                 diff.append(value)
