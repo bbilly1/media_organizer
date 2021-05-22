@@ -2,119 +2,157 @@
 
 import os
 import re
-import requests
-
+import subprocess
 from time import sleep
 
+import requests
 
-def get_emby_list(config):
-    """ get current emby movie list """
-    emby_url = config['emby']['emby_url']
-    emby_user_id = config['emby']['emby_user_id']
-    emby_api_key = config['emby']['emby_api_key']
-
-    url = (emby_url + '/Users/' + emby_user_id + '/Items?api_key=' + emby_api_key + 
-        '&Recursive=True&IncludeItemTypes=Movie&Fields=Path,PremiereDate')
-    r_emby = requests.get(url).json()
-    movie_list = r_emby['Items']
-    return movie_list
+from src.config import get_config
 
 
-def compare_list(movie_list):
-    """ compare the movie_list and look for wong ids """
-    errors_list = []
-    for movie in movie_list:
-        # from file name
-        file_name = os.path.basename(os.path.splitext(movie['Path'])[0])
-        year_id_pattern = re.compile(r'\(\d{4}\)')
-        year_str = year_id_pattern.findall(file_name)[-1]
-        file_year = year_str.replace('(', '').replace(')', '')
-        file_base_name = file_name.replace(year_str, '').strip()
-        # dedected in emby
-        movie_name = movie['Name']
-        try:
-            premier_year = movie['PremiereDate'].split('-')[0]
-        except KeyError:
-            premier_year = file_year
-        # check for error
-        error = False
-        if file_base_name != movie_name:
-            for i, j in enumerate(file_base_name):
-                if j != movie_name[i] and j != '-':
+class MovieNameFix():
+    """ check movie names in library and
+    rename if premiere date doesn't match with filename """
+
+    CONFIG = get_config()
+
+    def __init__(self):
+        self.movie_list = self.get_emby_list()
+        self.pending = self.find_errors()
+
+    def get_emby_list(self):
+        """ get current emby movie list """
+        emby_url = self.CONFIG['emby']['emby_url']
+        emby_user_id = self.CONFIG['emby']['emby_user_id']
+        emby_api_key = self.CONFIG['emby']['emby_api_key']
+
+        url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}'
+               '&Recursive=True&IncludeItemTypes=Movie'
+               '&Fields=Path,PremiereDate')
+        request = requests.get(url).json()
+        movie_list = request['Items']
+        return movie_list
+
+    def find_errors(self):
+        """ find missmatch in movie_list """
+
+        errors = []
+        for movie in self.movie_list:
+            # parse filename
+            file_name = os.path.basename(movie['Path'])
+            ext = os.path.splitext(file_name)[1]
+            movie_name = os.path.splitext(file_name)[0]
+            year_id_pattern = re.compile(r'\((\d{4})\)$')
+            file_year = year_id_pattern.findall(movie_name)[-1]
+            movie_name_file = movie_name.split(f'({file_year})')[0].strip()
+            # premier date
+            try:
+                premier_year = movie['PremiereDate'].split('-')[0]
+            except KeyError:
+                premier_year = file_year
+            # emby
+            emby_name = movie['Name']
+            error = False
+            if emby_name != movie_name_file:
+                diff = self.str_diff(emby_name, movie_name_file)
+                if diff != ['-', '/']:
                     error = True
-                    break
-        if file_year != premier_year:
-            error = True
-        # add to list on error
-        if error:
-            new_name = f'{movie_name} ({premier_year})'.replace('/', '-')
-            old = {'filename': file_name, 'year': file_year}
-            new = {'filename': new_name, 'year': premier_year}
-            errors_list.append([old, new])
-    return errors_list
+            if premier_year != file_year:
+                error = True
+            if error:
+                error_dict = {}
+                error_dict['old_year'] = file_year
+                error_dict['old_name'] = file_name
+                error_dict['new_year'] = premier_year
+                error_dict['new_name'] = f'{emby_name} ({premier_year}){ext}'
+                errors.append(error_dict)
+        return errors
 
+    @staticmethod
+    def str_diff(str1, str2):
+        """ simple diff calculator between two strings """
+        diff = set()
+        for num, value in enumerate(str1):
+            try:
+                if value != str2[num]:
+                    diff.add(value)
+            except IndexError:
+                diff.add(value)
+        for num, value in enumerate(str2):
+            try:
+                if value != str1[num]:
+                    diff.add(value)
+            except IndexError:
+                diff.add(value)
+        return list(diff)
 
-def rename(config, errors_list):
-    """ rename files with correct names """
-    print(f'renaming {len(errors_list)} movies.')
-    moviepath = config['media']['moviepath']
-    skipped = []
-    for movie in errors_list:
-        old_year = movie[0]['year']
-        old_name = movie[0]['filename']
-        old_folder = os.path.join(moviepath, old_year, old_name)
+    def fix_errors(self):
+        """ select what to do """
+        skipped = []
+        fixed = []
+        print(f'found {len(self.pending)} problems')
+        for error in self.pending:
+            old_name = error['old_name']
+            new_name = error['new_name']
+            # prompt
+            print(f'\nrenaming from-to:\n{old_name}\n{new_name}')
+            print('[0]: skip')
+            print('[1]: rename')
+            print('[c]: cancel')
+            select = input()
 
-        rename_files = os.listdir(old_folder)
-        new_year = movie[1]['year']
-        new_name = movie[1]['filename']
-        # prompt
-        print(f'\nrenaming from-to:\n{old_name}\n{new_name}')
-        print('[0]: skip')
-        print('[1]: rename')
-        print('[c]: cancel')
-        select = input()
-        if select == 0:
-            skipped.append(old_name)
-            break
-        elif select == 'c':
-            return
-        # continue
-        for item in rename_files:
-            old_file_name = os.path.join(old_folder, item)
-            new_file_name = os.path.join(old_folder, item.replace(old_name, new_name))
-            os.rename(old_file_name, new_file_name)
-        # movie folder
-        os.rename(old_folder, old_folder.replace(old_name, new_name))
-        # year folder
+            if select == '1':
+                self.rename_files(error)
+                fixed.append(new_name)
+            elif select == '0':
+                skipped.append(old_name)
+                continue
+            elif select == 'c':
+                print('cancel')
+                return
+            else:
+                print(f'{select} is invalid input')
+                return
+        # pritty output
+        if skipped:
+            print('skipped files:')
+            for i in skipped:
+                print(i)
+        if fixed:
+            print(f'fixed {len(fixed)} movies')
+
+    def rename_files(self, error):
+        """ actually rename the files """
+        moviepath = self.CONFIG['media']['moviepath']
+        old_year = error['old_year']
+        new_year = error['new_year']
+        old_movie = os.path.splitext(error['old_name'])[0]
+        old_folder = os.path.join(moviepath, old_year, old_movie)
+        new_movie = os.path.splitext(error['new_name'])[0]
+        # handle folder
         if old_year != new_year:
-            old_folder_name = old_folder.replace(f'({old_year})', f'({new_year})')
-            new_folder_name = old_folder_name.replace(old_year, new_year)
-            os.rename(old_folder_name, new_folder_name)
-    return skipped
+            old_year_folder = os.path.split(old_folder)[0]
+            new_year_folder = old_year_folder.replace(old_year, new_year)
+            new_folder = os.path.join(new_year_folder, new_movie)
+        else:
+            new_folder = old_folder.replace(old_movie, new_movie)
+        os.makedirs(new_folder)
+        # handle files
+        for file_name in os.listdir(old_folder):
+            old_file = os.path.join(old_folder, file_name)
+            new_file_name = file_name.replace(old_movie, new_movie)
+            new_file = os.path.join(new_folder, new_file_name)
+            os.rename(old_file, new_file)
+        # trash now empty folder
+        subprocess.call(['trash', old_folder])
 
 
-def get_pending(config):
-    """ returns a list of movies with errors """
-    movie_list = get_emby_list(config)
-    errors_list = compare_list(movie_list)
-    return errors_list
+def main():
+    """ main for fixing movie filenames """
+    handler = MovieNameFix()
 
-
-def main(config):
-    """ main to lunch the id_fix """
-    errors_list = get_pending(config)
-    if not errors_list:
+    if not handler.pending:
         print('no errors found')
-        sleep(2)
         return
-    else:
-        skipped = rename(config, errors_list)
-    
-    if skipped:
-        print('skipped following movies:')
-        for movie in skipped:
-            print(movie)
-        input('continue?')
-    else:
-        print(f'fixed {len(errors_list)} movie names.')
-        sleep(2)
+    handler.fix_errors()
+    sleep(2)

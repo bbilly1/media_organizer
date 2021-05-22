@@ -15,13 +15,13 @@ import src.trailers as trailers
 import src.id_fix as id_fix
 
 
-def get_pending_all(config):
+def get_pending_all():
     """ figure out what needs to be done """
     # call subfunction to collect pending
     pending_movie = moviesort.MovieHandler().pending
     pending_tv = tvsort.TvHandler().pending
     pending_trailer = len(trailers.TrailerHandler().pending)
-    pending_movie_fix = len(id_fix.get_pending(config))
+    pending_movie_fix = len(id_fix.MovieNameFix().pending)
     pending_total = pending_movie + pending_tv + pending_trailer + pending_movie_fix
     # build dict
     pending = {}
@@ -69,14 +69,14 @@ def print_menu(stdscr, current_row_idx, menu, pending):
     stdscr.refresh()
 
 
-def sel_handler(menu_item, config):
+def sel_handler(menu_item):
     """ lunch scripts from here based on selection """
     if menu_item == 'All':
         moviesort.main()
         tvsort.main()
         db_export.main()
         trailers.main()
-        id_fix.main(config)
+        id_fix.main()
     elif menu_item == 'Movies':
         moviesort.main()
     elif menu_item == 'TV shows':
@@ -86,15 +86,15 @@ def sel_handler(menu_item, config):
     elif menu_item == 'Trailer download':
         trailers.main()
     elif menu_item == 'Fix Movie Names':
-        id_fix.main(config)
+        id_fix.main()
 
 
-def curses_main(stdscr, menu, config):
+def curses_main(stdscr, menu):
     """ curses main to desplay and restart the menu """
     curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_WHITE)
     current_row_idx = 0
-    pending = get_pending_all(config)
+    pending = get_pending_all()
     print_menu(stdscr, current_row_idx, menu, pending)
     # endless loop
     while True:
@@ -132,14 +132,14 @@ def main():
     logging.basicConfig(filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s')
     # endless loop
     while True:
-        pending = get_pending_all(config)
+        pending = get_pending_all()
         if not pending:
             return
-        menu_item = curses.wrapper(curses_main, menu, config)
+        menu_item = curses.wrapper(curses_main, menu)
         if menu_item == 'Exit':
             return
         else:
-            sel_handler(menu_item, config)
+            sel_handler(menu_item)
             sleep(3)
 
 
