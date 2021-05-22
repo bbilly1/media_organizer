@@ -55,7 +55,7 @@ class MovieNameFix():
             error = False
             if emby_name != movie_name_file:
                 diff = self.str_diff(emby_name, movie_name_file)
-                if diff != ['-', '/']:
+                if diff:
                     error = True
             if premier_year != file_year:
                 error = True
@@ -70,20 +70,21 @@ class MovieNameFix():
 
     @staticmethod
     def str_diff(str1, str2):
-        """ simple diff calculator between two strings """
-        diff = set()
+        """ simple diff calculator between two strings
+        ignoreing - and / """
+        diff = []
         for num, value in enumerate(str1):
             try:
-                if value != str2[num]:
-                    diff.add(value)
+                if value not in (str2[num], '-'):
+                    diff.append(value)
             except IndexError:
-                diff.add(value)
+                diff.append(value)
         for num, value in enumerate(str2):
             try:
-                if value != str1[num]:
-                    diff.add(value)
+                if value not in (str1[num], '/'):
+                    diff.append(value)
             except IndexError:
-                diff.add(value)
+                diff.append(value)
         return list(diff)
 
     def fix_errors(self):
