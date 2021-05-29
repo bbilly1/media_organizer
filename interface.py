@@ -71,6 +71,7 @@ class Interface():
             if menu_item != 'Exit':
                 self.sel_handler(menu_item)
                 sleep(3)
+                self.pending = self.get_pending_all()
             else:
                 return
 
