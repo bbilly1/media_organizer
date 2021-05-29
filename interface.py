@@ -22,7 +22,7 @@ class Interface():
     log_folder = CONFIG['media']['log_folder']
     log_file = path.join(log_folder, 'rename.log')
     logging.basicConfig(
-        filename=log_file,level=logging.INFO,format='%(asctime)s:%(message)s'
+        filename=log_file, level=logging.INFO, format='%(asctime)s:%(message)s'
     )
 
     def __init__(self):
@@ -45,8 +45,8 @@ class Interface():
             pending_movie_fix = len(id_fix.MovieNameFix().pending)
             pending['trailer'] = pending_trailer
             pending['movie_fix'] = pending_movie_fix
-            pending_total = (pending_movie + pending_tv + 
-                            pending_trailer + pending_movie_fix)
+            pending_total = (pending_movie + pending_tv +
+                             pending_trailer + pending_movie_fix)
         else:
             pending_total = pending_movie + pending_tv
         pending['total'] = pending_total
@@ -55,12 +55,12 @@ class Interface():
     def build_menu(self):
         """ build the menu based on availabe keys in config file """
         menu = ['All', 'Movies', 'TV shows', 'Trailer download',
-                'Fix Movie Names', 'DB export','Exit']
+                'Fix Movie Names', 'DB export', 'Exit']
         config_keys = self.CONFIG.keys()
-        if not 'emby' in config_keys:
+        if 'emby' not in config_keys:
             menu.remove('Fix Movie Names')
             menu.remove('DB export')
-        if not 'ydl_opts' in config_keys:
+        if 'ydl_opts' not in config_keys:
             menu.remove('Trailer download')
         return menu
 
@@ -69,7 +69,7 @@ class Interface():
         while True:
             menu_item = curses.wrapper(self.curses_main)
             if menu_item != 'Exit':
-                self.sel_handler()
+                self.sel_handler(menu_item)
                 sleep(3)
             else:
                 return
@@ -114,23 +114,24 @@ class Interface():
                 # clean exit on ctrl + c
                 return 'Exit'
 
-    def sel_handler(self):
+    @staticmethod
+    def sel_handler(menu_item):
         """ lunch scripts from here based on selection """
-        if self.menu_item == 'All':
+        if menu_item == 'All':
             moviesort.main()
             tvsort.main()
             trailers.main()
             id_fix.main()
             db_export.main()
-        elif self.menu_item == 'Movies':
+        elif menu_item == 'Movies':
             moviesort.main()
-        elif self.menu_item == 'TV shows':
+        elif menu_item == 'TV shows':
             tvsort.main()
-        elif self.menu_item == 'Trailer download':
+        elif menu_item == 'Trailer download':
             trailers.main()
-        elif self.menu_item == 'Fix Movie Names':
+        elif menu_item == 'Fix Movie Names':
             id_fix.main()
-        elif self.menu_item == 'DB export':
+        elif menu_item == 'DB export':
             db_export.main()
 
     def print_menu(self, current_row_idx):
