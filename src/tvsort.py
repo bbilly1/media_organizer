@@ -356,7 +356,9 @@ class TvHandler():
             os.rename(old_file, new_file)
             # finish up
             renamed.append(new_file)
-            logging.info('tv:from [%s] to [%s]', episode.filename, new_file)
+            logging.info(
+                'tv:from [%s] to [%s]', episode.filename, new_file_name
+            )
         return renamed
 
     def move_to_archive(self):
