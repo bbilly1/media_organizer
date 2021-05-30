@@ -138,15 +138,19 @@ class Interface():
     def print_menu(self, current_row_idx):
         """ print menu with populated pending count """
         # build stdscr
-        menu = self.menu
-        h, w = self.stdscr.getmaxyx()
-        longest = len(max(menu))
-        x = w // 2 - longest
+        max_h, max_w = self.stdscr.getmaxyx()
+        longest = len(max(self.menu))
+        x = max_w // 2 - longest // 2 - 2
+        first_menu = max_h // 2 - len(self.menu) // 2
         self.stdscr.clear()
-        # help
-        self.stdscr.addstr(h - 1, x, 'q: quit, r: refresh')
+        # menu strings
+        url = 'github.com/bbilly1/media_organizer'
+        help_str = 'q: quit, r: refresh'
+        self.stdscr.addstr(max_h - 2, max_w // 2 - len(help_str) // 2, help_str)
+        self.stdscr.addstr(max_h - 1, max_w // 2 - len(url) // 2, url)
+        self.stdscr.addstr(first_menu - 2, x, 'Media Organizer')
         # loop through menu items
-        for idx, row in enumerate(menu):
+        for idx, row in enumerate(self.menu):
             # menu items count
             if row == 'All':
                 pending_count = self.pending['total']
@@ -161,7 +165,7 @@ class Interface():
             else:
                 pending_count = ' '
             # center whole
-            y = h // 2 - len(menu) + idx
+            y = first_menu + idx
             # print string to menu
             text = f'[{pending_count}] {row}'
             if idx == current_row_idx:
