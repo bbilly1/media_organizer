@@ -4,9 +4,11 @@
 This project is used and tested under Linux and is ideal to be used from something like a Raspberry Pi or a Linux based NAS. If you want to help me to get it to work under Windows, please contribute.
 
 ## Run
-Clone the repo, setup config file (see below) and run `interface.py`.
+Clone the repo, setup config file (see below) and run `interface.py`. Use your arrowkeys no navigate up and down the menu.  
+* **q** quit the interface
+* **r** refresh the pending items by rescanning the filesystem.
 
-## moviesort
+## Movies
 Detect movie names by querying [themoviedb.org](https://www.themoviedb.org/) API and renaming the file based on a selection of possible matches. Follow the config file instructions bellow to get your API key.
 
 All data is courtesy of [The Movie Database](https://www.themoviedb.org), please contribute to this excellent database.
@@ -14,22 +16,22 @@ All data is courtesy of [The Movie Database](https://www.themoviedb.org), please
 Movies will get renamed to this nameing style, a more flexible solution is in pending:  
 **{movie-name} {Year}/{movie-name} {Year}.{ext}**
 
-## tvsort
+## TV shows
 Detect tv show filenames by querying the publicly available [tvmaze.com](https://www.tvmaze.com/) API to identify the show name and the episode name based on a selection of possible matches.
 
 Episodes are named in this style, a more flexible solution is in pending:  
 **{show-name}/Season {nr}/show-name - S{nr}E{nr} - {episode-name}.{ext}**
 
-## db_export
-Export the library to csv files. Calles the Emby API to get a list of movies and episodes and exports this to a convenient set ov CSV files.
-
-## trailers
+## Trailer download
 Downloading trailers from links provided from emby and move them into the movie folder.  
 Trailers are named in this style, a more flexible solution is in pending:  
 **{movie-name} {Year}_{youtube-id}_trailer.mkv**
 
-## bad_id
+## Fix Movie Names
 Sometimes Emby get's it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
+
+## DB export
+Export the library to csv files. Calles the Emby API to get a list of movies and episodes and exports this to a convenient set ov CSV files.
 
 ## setup
 Needs Python >= 3.6 to run.
@@ -66,9 +68,14 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 * `min_file_size`: Minimal filesize to be considered a relevant media file in bytes.  
 
 #### Emby integration
-* `emby_url`: url where your emby API is reachable
+*optional:* remove the 'emby' key from config.json to disable the emby integration. 
+* `emby_url`: url where your emby instance is reachable
 * `emby_user_id`: user id of your emby user
 * `emby_api_key`: api key for your user on emby  
 
 #### ydl_opts *Trailer download:*  
+*optional:* remove the 'ydl_opts' key from config.json to disable the trailer download functionality.  
 Arguments under the [ydl_opts] section will get passed in to youtube-dl for *trailers*. Check out the documentation for details.
+
+## Known limitations:
+Most likely *media_organizer* will fail if there are any files like Outtakes, Extras, Feauturettes, etc in the folder. Should there be any files like that in the folder, moove/delete them first before opening *media_organizer*. 

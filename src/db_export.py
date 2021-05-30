@@ -1,6 +1,7 @@
 """ export collection from emby to CSV """
 
 import csv
+from time import sleep
 from os import path
 
 import requests
@@ -27,8 +28,12 @@ class DatabaseExport():
                '&fields=Genres,MediaStreams,Overview,'
                'ProviderIds,Path,RunTimeTicks'
                '&SortBy=DateCreated&SortOrder=Descending')
+        try:
+            response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            sleep(5)
+            response = requests.get(url)
 
-        response = requests.get(url)
         all_movies = response.json()['Items']
         # episodes
         url = (f'{emby_url}/Users/{emby_user_id}/Items?api_key={emby_api_key}'
@@ -36,8 +41,12 @@ class DatabaseExport():
                '&Fields=DateCreated,Genres,MediaStreams,'
                'MediaSources,Overview,ProviderIds,Path,RunTimeTicks'
                '&SortBy=DateCreated&SortOrder=Descending&IsMissing=false')
+        try:
+            response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            sleep(5)
+            response = requests.get(url)
 
-        response = requests.get(url)
         all_episodes = response.json()['Items']
         return all_movies, all_episodes
 
