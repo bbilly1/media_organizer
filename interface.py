@@ -115,15 +115,16 @@ class Interface():
                 # clean exit on ctrl + c
                 return 'Exit'
 
-    @staticmethod
-    def sel_handler(menu_item):
+    def sel_handler(self, menu_item):
         """ lunch scripts from here based on selection """
         if menu_item == 'All':
             moviesort.main()
             tvsort.main()
-            trailers.main()
-            id_fix.main()
-            db_export.main()
+            if 'ydl_opts' in self.CONFIG.keys():
+                trailers.main()
+            if 'emby' in self.CONFIG.keys():
+                id_fix.main()
+                db_export.main()
         elif menu_item == 'Movies':
             moviesort.main()
         elif menu_item == 'TV shows':
@@ -145,8 +146,8 @@ class Interface():
         self.stdscr.clear()
         # menu strings
         url = 'github.com/bbilly1/media_organizer'
-        help_str = 'q: quit, r: refresh'
-        self.stdscr.addstr(max_h - 2, max_w // 2 - len(help_str) // 2, help_str)
+        h_str = 'q: quit, r: refresh'
+        self.stdscr.addstr(max_h - 2, max_w // 2 - len(h_str) // 2, h_str)
         self.stdscr.addstr(max_h - 1, max_w // 2 - len(url) // 2, url)
         self.stdscr.addstr(first_menu - 2, x, 'Media Organizer')
         # loop through menu items
