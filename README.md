@@ -41,14 +41,14 @@ Needs Python >= 3.6 to run.
 ### install requirements
 These are the none standard Python libraries in use in this project:
 * [requests](https://pypi.org/project/requests/)
-    * Install on Arch: `sudo pacman -Qi python-request`
+    * Install on Arch: `sudo pacman -S python-request`
     * Install with pip: `pip install request`
 * [trash-cli](https://pypi.org/project/trash-cli/)
     * Install on Arch: `sudo pacman -S trash-cli`
     * Install with pip: `pip install trash-cli`
 * [youtube-dl](https://pypi.org/project/youtube_dl/)
     * Install on Arch: `sudo pacman -S youtube-dl`
-    * Install with pip: `pip install youtube_d`
+    * Install with pip: `pip install youtube_dl`
 * curses
     * Is already installed on most linux based systems.
     * On Windows: `pip install windows-curses`
@@ -80,4 +80,4 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 Arguments under the [ydl_opts] section will get passed in to youtube-dl for *trailers*. Check out the documentation for details.
 
 ## Known limitations:
-Most likely *media_organizer* will fail if there are any files like Outtakes, Extras, Feauturettes, etc in the folder. Should there be any files like that in the folder, moove/delete them first before opening *media_organizer*. 
+Most likely *media_organizer* will fail if there are any files like Outtakes, Extras, Feauturettes, etc in the folder. For these cases, moove/delete them first before running *media_organizer*.  
