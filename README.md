@@ -1,3 +1,5 @@
+![banner.jpg](assets/media-organizer-banner.png?raw=true "Title")  
+
 # media_organizer
 *A set of python scripts to rename movies and tv shows.*
 
