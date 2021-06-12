@@ -41,8 +41,8 @@ Needs Python >= 3.6 to run.
 ### install requirements
 These are the none standard Python libraries in use in this project:
 * [requests](https://pypi.org/project/requests/)
-    * Install on Arch: `sudo pacman -S python-request`
-    * Install with pip: `pip install request`
+    * Install on Arch: `sudo pacman -S python-requests`
+    * Install with pip: `pip install requests`
 * [trash-cli](https://pypi.org/project/trash-cli/)
     * Install on Arch: `sudo pacman -S trash-cli`
     * Install with pip: `pip install trash-cli`
