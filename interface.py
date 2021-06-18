@@ -75,6 +75,13 @@ class Interface():
             else:
                 return
 
+    def center_message(self, message):
+        """ center message in stdscr """
+        max_h, max_w = self.stdscr.getmaxyx()
+        h = max_h // 2
+        w = max_w // 2 - len(message) // 2
+        return h, w
+
     def curses_main(self, stdscr):
         """ curses main to desplay and restart the menu """
         self.stdscr = stdscr
@@ -96,7 +103,9 @@ class Interface():
                     current_row_idx += 1
                 elif key == curses.KEY_ENTER or key in [10, 13]:
                     menu_item = self.menu[current_row_idx]
-                    stdscr.addstr(0, 0, f'start task: {menu_item}')
+                    message = f'start task: {menu_item}'
+                    h, w = self.center_message(message)
+                    stdscr.addstr(h, w, message)
                     stdscr.refresh()
                     sleep(1)
                     # exit curses and do something
@@ -104,7 +113,9 @@ class Interface():
                 elif key == ord('q'):
                     return 'Exit'
                 elif key == ord('r'):
-                    stdscr.addstr(0, 0, 'refreshing pending')
+                    message = 'refreshing pending'
+                    h, w = self.center_message(message)
+                    stdscr.addstr(h, w, message)
                     self.pending = self.get_pending_all()
                     stdscr.refresh()
                     sleep(1)
@@ -138,17 +149,19 @@ class Interface():
 
     def print_menu(self, current_row_idx):
         """ print menu with populated pending count """
-        # build stdscr
+        self.stdscr.clear()
         max_h, max_w = self.stdscr.getmaxyx()
+        # menu strings
+        message = 'github.com/bbilly1/media_organizer'
+        _, w = self.center_message(message)
+        self.stdscr.addstr(max_h - 1, w, message)
+        message = 'q: quit, r: refresh'
+        _, w = self.center_message(message)
+        self.stdscr.addstr(max_h - 2, w, message)
+        # build stdscr
         longest = len(max(self.menu))
         x = max_w // 2 - longest // 2 - 2
         first_menu = max_h // 2 - len(self.menu) // 2
-        self.stdscr.clear()
-        # menu strings
-        url = 'github.com/bbilly1/media_organizer'
-        h_str = 'q: quit, r: refresh'
-        self.stdscr.addstr(max_h - 2, max_w // 2 - len(h_str) // 2, h_str)
-        self.stdscr.addstr(max_h - 1, max_w // 2 - len(url) // 2, url)
         self.stdscr.addstr(first_menu - 2, x, 'Media Organizer')
         # loop through menu items
         for idx, row in enumerate(self.menu):
