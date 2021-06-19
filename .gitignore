@@ -1,6 +1,9 @@
 # python
 __pycache__
 
+# vscode
+.vscode/
+
 # local configuration
 config.json
 
