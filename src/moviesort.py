@@ -157,11 +157,12 @@ class MovieIdentify():
         moviename = self.filename.split(year)[0].rstrip('.')
         moviename_encoded = self.encode_moviename(moviename)
         # build file_parsed dict
-        file_parsed = {}
-        file_parsed['moviename'] = moviename
-        file_parsed['moviename_encoded'] = moviename_encoded
-        file_parsed['year'] = int(year)
-        file_parsed['file_ext'] = file_ext
+        file_parsed = {
+            'moviename': moviename,
+            'moviename_encoded': moviename_encoded,
+            'year': int(year),
+            'file_ext': file_ext
+        }
         return file_parsed
 
     @ staticmethod
@@ -234,10 +235,11 @@ class MovieIdentify():
         name_dedected = result['title']
         new_moviename = f'{name_dedected} ({year_dedected})'
         new_filename = f'{new_moviename}{file_ext}'
-        movie_details = {}
-        movie_details['new_moviename'] = new_moviename
-        movie_details['new_filename'] = new_filename
-        movie_details['year_dedected'] = year_dedected
+        movie_details = {
+            'new_moviename': new_moviename,
+            'new_filename': new_filename,
+            'year_dedected': year_dedected
+        }
         return movie_details
 
 

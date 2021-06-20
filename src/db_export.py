@@ -130,8 +130,6 @@ class ListParser():
         file_item_tech = []
 
         for file_item in filelist:
-            file_name = path.basename(file_item['Path'])
-            duration_min = round(file_item['RunTimeTicks'] / 600000000)
             # loop through media sources
             for i in file_item['MediaSources']:
                 if i['Protocol'] == 'File':
@@ -147,14 +145,15 @@ class ListParser():
                     # found it
                     break
             # technical csv
-            tech_dict = {}
-            tech_dict['file_name'] = file_name
-            tech_dict['duration_min'] = duration_min
-            tech_dict['filesize_MB'] = filesize
-            tech_dict['image_width'] = image_width
-            tech_dict['image_height'] = image_height
-            tech_dict['avg_bitrate_MB'] = avg_bitrate
-            tech_dict['codec'] = codec
+            tech_dict = {
+                'file_name': path.basename(file_item['Path']),
+                'duration_min': round(file_item['RunTimeTicks'] / 600000000),
+                'filesize_MB': filesize,
+                'image_width': image_width,
+                'image_height': image_height,
+                'avg_bitrate_MB': avg_bitrate,
+                'codec': codec
+            }
             file_item_tech.append(tech_dict)
 
         # sort and return
@@ -171,20 +170,14 @@ class ListParser():
 
         for movie in all_movies:
 
-            movie_name = movie['Name']
-            year = movie['Path'].split('/')[3]
-            overview = movie['Overview']
-            imdb = movie['ProviderIds']['Imdb']
-            genres = ', '.join(movie['Genres'])
-            duration_min = round(movie['RunTimeTicks'] / 600000000)
-
-            info_dict = {}
-            info_dict['movie_name'] = movie_name
-            info_dict['year'] = year
-            info_dict['imdb'] = imdb
-            info_dict['genres'] = genres
-            info_dict['overview'] = overview
-            info_dict['duration_min'] = duration_min
+            info_dict = {
+                'movie_name': movie['Name'],
+                'year': movie['Path'].split('/')[3],
+                'imdb': movie['ProviderIds']['Imdb'],
+                'genres': ', '.join(movie['Genres']),
+                'overview': movie['Overview'],
+                'duration_min': round(movie['RunTimeTicks'] / 600000000)
+            }
             movie_info.append(info_dict)
 
         # sort and return
@@ -198,8 +191,6 @@ class ListParser():
         episode_info = []
 
         for episode in all_episodes:
-            episode_name = episode['Name']
-            file_name = path.basename(episode['Path'])
             try:
                 episode_id = episode['IndexNumber']
             except KeyError:
@@ -214,22 +205,19 @@ class ListParser():
                 imdb = episode['ProviderIds']['Imdb']
             except KeyError:
                 imdb = 'NA'
-            genres = ', '.join(episode['Genres'])
-            season_name = episode['SeasonName']
-            series_name = episode['SeriesName']
-            duration_min = round(episode['RunTimeTicks'] / 600000000)
 
             # info csv
-            info_dict = {}
-            info_dict['series_name'] = series_name
-            info_dict['season_name'] = season_name
-            info_dict['episode_id'] = episode_id
-            info_dict['episode_name'] = episode_name
-            info_dict['file_name'] = file_name
-            info_dict['imdb'] = imdb
-            info_dict['genres'] = genres
-            info_dict['overview'] = overview
-            info_dict['duration_min'] = duration_min
+            info_dict = {
+                'episode_id': episode_id,
+                'overview': overview,
+                'imdb': imdb,
+                'episode_name': episode['Name'],
+                'file_name': path.basename(episode['Path']),
+                'genres': ', '.join(episode['Genres']),
+                'series_name': episode['SeriesName'],
+                'season_name': episode['SeasonName'],
+                'duration_min': round(episode['RunTimeTicks'] / 600000000)
+            }
             episode_info.append(info_dict)
 
         # sort and return

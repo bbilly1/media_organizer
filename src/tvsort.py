@@ -133,16 +133,15 @@ class Episode():
         filename = self.filename
         season, episode, season_id, id_style = Static.split_file_name(filename)
         showname = filename.split(season_id)[0]
-        ext = os.path.splitext(filename)[1]
-        encoded = Static.showname_encoder(showname)
         # build file_parsed dict
-        file_parsed = {}
-        file_parsed['showname'] = encoded
-        file_parsed['season'] = season
-        file_parsed['episode'] = episode
-        file_parsed['season_id'] = season_id
-        file_parsed['id_style'] = id_style
-        file_parsed['ext'] = ext
+        file_parsed = {
+            'season': season,
+            'episode': episode,
+            'season_id': season_id,
+            'id_style': id_style,
+            'showname': Static.showname_encoder(showname),
+            'ext': ext = os.path.splitext(filename)[1]
+        }
         # return dict
         return file_parsed
 
@@ -154,22 +153,19 @@ class Episode():
         # loop through results
         all_results = []
         for idx, result in enumerate(request):
-            list_id = idx
-            show_id = result['show']['id']
-            showname_clean = result['show']['name']
-            status = result['show']['status']
             desc_raw = result['show']['summary']
             # filter out basic html tags
             try:
                 desc = re.sub('<[^<]+?>', '', desc_raw)
             except TypeError:
                 desc = desc_raw
-            result_dict = {}
-            result_dict['list_id'] = list_id
-            result_dict['show_id'] = show_id
-            result_dict['showname_clean'] = showname_clean
-            result_dict['desc'] = desc
-            result_dict['status'] = status
+            result_dict = {
+                'list_id': idx,
+                'show_id': result['show']['id'],
+                'showname_clean': result['show']['name'],
+                'status': result['show']['status'],
+                'desc': desc
+            }
             all_results.append(result_dict)
         # return all_results dict
         return all_results
@@ -218,12 +214,13 @@ class Episode():
         if not show_id and not showname_clean:
             show_id, showname_clean = self.pick_show_id()
         season, episode, episode_name = self.get_episode_name(show_id)
-        episode_details = {}
-        episode_details['show_id'] = show_id
-        episode_details['showname_clean'] = showname_clean
-        episode_details['season'] = season
-        episode_details['episode'] = episode
-        episode_details['episode_name'] = episode_name
+        episode_details = {
+            'show_id': show_id,
+            'showname_clean': showname_clean,
+            'season': season,
+            'episode': episode,
+            'episode_name': episode_name
+        }
         return episode_details
 
     def multi_parser(self, show_id):
@@ -322,11 +319,11 @@ class TvHandler():
             # add to discovered
             showname = episode.file_parsed['showname']
             showname_clean = episode.episode_details['showname_clean']
-            show_id = episode.episode_details['show_id']
-            discovered_item = {}
-            discovered_item['showname'] = showname
-            discovered_item['showname_clean'] = showname_clean
-            discovered_item['show_id'] = show_id
+            discovered_item = {
+                'showname': showname
+                'showname_clean': showname_clean
+                'show_id': episode.episode_details['show_id']
+            }
             self.discovered.append(discovered_item)
             identified.append(episode)
             print(filename)

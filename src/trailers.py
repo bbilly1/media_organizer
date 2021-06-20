@@ -33,8 +33,10 @@ class TrailerHandler():
             trailing_pattern = re.compile(trailing_reg)
             youtube_id = trailing_pattern.findall(trailer_name)[0][1]
             movie_name = movie['Path'].split('/')[-2]
-            trailer_details = {'movie_name': movie_name,
-                               'youtube_id': youtube_id}
+            trailer_details = {
+                'movie_name': movie_name,
+                'youtube_id': youtube_id
+            }
             local_trailer_list.append(trailer_details)
         return local_trailer_list
 
@@ -54,8 +56,10 @@ class TrailerHandler():
             for remote_trailer in remote_trailers:
                 url = remote_trailer['Url']
                 youtube_id = url.split('?v=')[1]
-                trailer_details = {'movie_name': movie_name,
-                                   'youtube_id': youtube_id}
+                trailer_details = {
+                    'movie_name': movie_name,
+                    'youtube_id': youtube_id
+                }
                 remote_trailers_list.append(trailer_details)
         return remote_trailers_list
 
@@ -69,8 +73,10 @@ class TrailerHandler():
         for trailer_line in trailer_lines:
             youtube_id = trailer_line.split()[0]
             movie_name = trailer_line.lstrip(youtube_id).strip()
-            trailer_details = {'movie_name': movie_name,
-                               'youtube_id': youtube_id}
+            trailer_details = {
+                'movie_name': movie_name,
+                'youtube_id': youtube_id
+            }
             ignore_trailer_list.append(trailer_details)
         return ignore_trailer_list
 

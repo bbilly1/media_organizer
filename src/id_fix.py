@@ -60,11 +60,12 @@ class MovieNameFix():
             if premier_year != file_year:
                 error = True
             if error:
-                error_dict = {}
-                error_dict['old_year'] = file_year
-                error_dict['old_name'] = file_name
-                error_dict['new_year'] = premier_year
-                error_dict['new_name'] = f'{emby_name} ({premier_year}){ext}'
+                error_dict = {
+                    'old_year': file_year,
+                    'old_name': file_name,
+                    'new_year': premier_year,
+                    'new_name': f'{emby_name} ({premier_year}){ext}'
+                }
                 errors.append(error_dict)
         return errors
 
