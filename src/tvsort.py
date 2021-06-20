@@ -320,8 +320,8 @@ class TvHandler():
             showname = episode.file_parsed['showname']
             showname_clean = episode.episode_details['showname_clean']
             discovered_item = {
-                'showname': showname
-                'showname_clean': showname_clean
+                'showname': showname,
+                'showname_clean': showname_clean,
                 'show_id': episode.episode_details['show_id']
             }
             self.discovered.append(discovered_item)
