@@ -140,7 +140,7 @@ class Episode():
             'season_id': season_id,
             'id_style': id_style,
             'showname': Static.showname_encoder(showname),
-            'ext': ext = os.path.splitext(filename)[1]
+            'ext': os.path.splitext(filename)[1]
         }
         # return dict
         return file_parsed
