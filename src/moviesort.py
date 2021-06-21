@@ -143,8 +143,8 @@ class MovieIdentify():
         year_list = year_id_pattern.findall(self.filename)
         # remove clear false
         for year in year_list:
-            if year == '1080':
-                # there were no movies back in 1080
+            if year in ('1080', '2160'):
+                # resolution not year
                 year_list.remove(year)
             file_split = self.filename.split(year)
             if len(file_split[0]) == 0:
