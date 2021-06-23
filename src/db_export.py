@@ -113,12 +113,17 @@ class ListParser():
             played = file_item['UserData']['Played']
             file_name = path.basename(file_item['Path'])
             file_item_name = path.splitext(file_name)[0]
+            for stream in file_item['MediaStreams']:
+                if stream['Type'] == 'Video':
+                    width = stream['Width']
+                    height = stream['Height']
+                    break
             # seen or unseen
             if played:
                 icon = '[X]'
             else:
                 icon = '[ ]'
-            seen_line = f'{icon} {file_item_name}'
+            seen_line = f'{icon} {file_item_name} [{width}x{height}]'
             file_item_seen.append(seen_line)
 
         return file_item_seen
