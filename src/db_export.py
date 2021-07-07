@@ -175,10 +175,15 @@ class ListParser():
 
         for movie in all_movies:
 
+            try:
+                imdb = movie['ProviderIds']['Imdb']
+            except KeyError:
+                imdb = False
+
             info_dict = {
                 'movie_name': movie['Name'],
                 'year': movie['Path'].split('/')[3],
-                'imdb': movie['ProviderIds']['Imdb'],
+                'imdb': imdb,
                 'genres': ', '.join(movie['Genres']),
                 'overview': movie['Overview'],
                 'duration_min': round(movie['RunTimeTicks'] / 600000000)
