@@ -11,7 +11,7 @@ import requests
 from src.config import get_config
 
 
-class Static():
+class Static:
     """ staticmethods collection used from EpisodeIdentify """
 
     @staticmethod
@@ -106,7 +106,7 @@ class Static():
         return request
 
 
-class Episode():
+class Episode:
     """ describes single episode """
 
     def __init__(self, filename, discovered):
@@ -275,7 +275,7 @@ class Episode():
         return season, episode, episode_name
 
 
-class TvHandler():
+class TvHandler:
     """ handles the tv sort classes """
 
     CONFIG = get_config()

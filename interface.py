@@ -15,7 +15,7 @@ import src.trailers as trailers
 import src.id_fix as id_fix
 
 
-class Interface():
+class Interface:
     """ creating and removing the menu """
 
     CONFIG = get_config()

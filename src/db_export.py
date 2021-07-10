@@ -9,7 +9,7 @@ import requests
 from src.config import get_config
 
 
-class DatabaseExport():
+class DatabaseExport:
     """ saves database to CSV """
 
     CONFIG = get_config()
@@ -100,7 +100,7 @@ class DatabaseExport():
                 f.write(line + '\n')
 
 
-class ListParser():
+class ListParser:
     """ static parse the lists from DatabaseExport """
 
     @staticmethod

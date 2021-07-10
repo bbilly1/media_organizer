@@ -10,7 +10,7 @@ import requests
 from src.config import get_config
 
 
-class MovieHandler():
+class MovieHandler:
     """ handler for moving files around """
 
     CONFIG = get_config()
@@ -125,7 +125,7 @@ class MovieHandler():
                 os.rename(old_path, new_path)
 
 
-class MovieIdentify():
+class MovieIdentify:
     """ describes and identifies a single movie """
 
     CONFIG = get_config()

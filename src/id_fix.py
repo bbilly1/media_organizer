@@ -10,7 +10,7 @@ import requests
 from src.config import get_config
 
 
-class MovieNameFix():
+class MovieNameFix:
     """ check movie names in library and
     rename if premiere date doesn't match with filename """
 

@@ -11,7 +11,7 @@ import youtube_dl
 from src.config import get_config
 
 
-class TrailerHandler():
+class TrailerHandler:
     """ holds the trailers """
 
     CONFIG = get_config()
