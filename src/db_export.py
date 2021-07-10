@@ -9,6 +9,49 @@ import requests
 from src.config import get_config
 
 
+class EmbyLibrary:
+    """ handle emby library refresh status """
+
+    CONFIG = get_config()
+
+    def __init__(self):
+        self.ready = self.wait_for_it()
+
+    def wait_for_it(self):
+        """ wait for all libraries to be idle """
+
+        counter = 0
+        while True:
+            all_active = self.get_all_libraries()
+            if all_active:
+                if counter == 0:
+                    print('Library scan in progress, sleeping...')
+                sleep(5)
+                counter = counter + 1
+            else:
+                return True
+            if counter > 24:
+                print('Library scan taking longer, exiting...')
+                return False
+
+    def get_all_libraries(self):
+        """ get refresh status from all libraries """
+        emby_url = self.CONFIG['emby']['emby_url']
+        emby_api_key = self.CONFIG['emby']['emby_api_key']
+        url = f'{emby_url}/Library/VirtualFolders?api_key={emby_api_key}'
+
+        try:
+            response = requests.get(url).json()
+        except requests.exceptions.ConnectionError:
+            sleep(5)
+            response = requests.get(url).json()
+
+        all_libraries = [i['RefreshStatus'] for i in response]
+        all_active = [i for i in all_libraries if i != 'Idle']
+
+        return all_active
+
+
 class DatabaseExport:
     """ saves database to CSV """
 
