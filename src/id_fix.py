@@ -8,6 +8,7 @@ from time import sleep
 import requests
 
 from src.config import get_config
+from src.db_export import EmbyLibrary
 
 
 class MovieNameFix:
@@ -151,6 +152,11 @@ class MovieNameFix:
 
 def main():
     """ main for fixing movie filenames """
+    # stop if scan in progress
+    lib_state = EmbyLibrary()
+    if not lib_state.ready:
+        return
+
     handler = MovieNameFix()
 
     if not handler.pending:

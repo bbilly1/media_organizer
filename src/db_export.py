@@ -283,6 +283,11 @@ class ListParser:
 def main():
     """ main to regenerate csv files """
     print('recreating db files')
+    # stop if scan in progress
+    lib_state = EmbyLibrary()
+    if not lib_state.ready:
+        return
+
     export = DatabaseExport()
     export.parse_movies()
     export.parse_episodes()
