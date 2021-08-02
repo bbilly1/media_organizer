@@ -71,6 +71,13 @@ class Static:
     @staticmethod
     def showname_encoder(showname):
         """ encodes showname for best possible match """
+        # handle acronyms
+        acro_pattern = re.compile(r'[A-Z]{1}\.')
+        acronym_match = acro_pattern.findall(showname)
+        if acronym_match:
+            acronym = ''.join(acronym_match)
+            shortened = ''.join([i.strip('.') for i in acronym])
+            showname = showname.replace(acronym, shortened)
         # tvmaze doesn't like years in showname
         showname = showname.strip().rstrip('-').rstrip('.').strip()
         year_pattern = re.compile(r'\(?[0-9]{4}\)?')
