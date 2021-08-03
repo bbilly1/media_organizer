@@ -92,8 +92,8 @@ class MovieHandler:
                 os.makedirs(new_folder)
             except FileExistsError:
                 print(f'{new_filename}\nalready exists in archive')
-                double = input('[o]: overwrite, [s]: skip and ignore\n')
-                if double == 'o':
+                double = input('[O]: overwrite, [s]: skip\n') or 'O'
+                if double == 'O':
                     subprocess.call(["trash", new_folder])
                     os.makedirs(new_folder)
                 elif double == 's':
