@@ -223,12 +223,17 @@ class ListParser:
             except KeyError:
                 imdb = False
 
+            try:
+                overview = movie['Overview']
+            except KeyError:
+                overview = False
+
             info_dict = {
                 'movie_name': movie['Name'],
                 'year': movie['Path'].split('/')[3],
                 'imdb': imdb,
                 'genres': ', '.join(movie['Genres']),
-                'overview': movie['Overview'],
+                'overview': overview,
                 'duration_min': round(movie['RunTimeTicks'] / 600000000)
             }
             movie_info.append(info_dict)
