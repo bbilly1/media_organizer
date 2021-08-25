@@ -60,6 +60,7 @@ class MovieNameFix:
                     error = True
             if premier_year != file_year:
                 error = True
+                emby_name = movie_name_file
             if error:
                 error_dict = {
                     'old_year': file_year,
