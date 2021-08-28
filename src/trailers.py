@@ -67,7 +67,7 @@ class TrailerHandler:
         """ read log file to get list of trailers to ignore """
         log_folder = self.CONFIG['media']['log_folder']
         log_file = os.path.join(log_folder, 'trailers')
-        with open(log_file, 'r') as log_file:
+        with open(log_file, 'r', encoding='utf-8') as log_file:
             trailer_lines = log_file.readlines()
         ignore_trailer_list = []
         for trailer_line in trailer_lines:
@@ -97,6 +97,7 @@ class TrailerHandler:
         return pending
 
     def dl_pending(self):
+        # pylint: disable=broad-except
         """ download pending trailers """
         sortpath = self.CONFIG['media']['sortpath']
         log_folder = self.CONFIG['media']['log_folder']
@@ -121,7 +122,7 @@ class TrailerHandler:
                     if i == 4:
                         # giving up
                         log_file = os.path.join(log_folder, 'trailers')
-                        with open(log_file, 'a') as f:
+                        with open(log_file, 'a', encoding='utf-8') as f:
                             f.write(f'{youtube_id} {movie_name}\n')
                         break
                     sleep((i + 1) ** 2)

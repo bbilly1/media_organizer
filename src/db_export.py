@@ -126,7 +126,7 @@ class DatabaseExport:
         file_path = path.join(log_folder, filename)
 
         # open and write
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             # take fieldnames from first line
             fieldnames = to_write[0].keys()
             csv_writer = csv.DictWriter(f, fieldnames)
@@ -138,7 +138,7 @@ class DatabaseExport:
         log_folder = self.CONFIG['media']['log_folder']
         file_path = path.join(log_folder, filename)
         # movie by new
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             for line in to_write:
                 f.write(line + '\n')
 

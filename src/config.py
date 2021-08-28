@@ -16,7 +16,7 @@ def get_config():
     else:
         config_path = path.join(root_folder, 'config.json')
     # parse
-    with open(config_path, 'r') as config_file:
+    with open(config_path, 'r', encoding='utf-8') as config_file:
         data = config_file.read()
     config = json.loads(data)
     return config

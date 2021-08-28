@@ -8,11 +8,11 @@ from time import sleep
 
 from src.config import get_config
 
-import src.tvsort as tvsort
-import src.moviesort as moviesort
-import src.db_export as db_export
-import src.trailers as trailers
-import src.id_fix as id_fix
+from src import tvsort
+from src import moviesort
+from src import db_export
+from src import trailers
+from src import id_fix
 
 
 class Interface:
