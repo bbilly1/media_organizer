@@ -233,9 +233,9 @@ class MovieIdentify:
         # build new_filename
         year_dedected = result['release_date'].split('-')[0]
         name_dedected = result['title']
-        new_moviename = f'{name_dedected} ({year_dedected})'
-        cleaned_name = self.name_cleaner(new_moviename)
-        new_filename = f'{cleaned_name}{file_ext}'
+        cleaned_name = self.name_cleaner(name_dedected)
+        new_moviename = f'{cleaned_name} ({year_dedected})'
+        new_filename = f'{new_moviename}{file_ext}'
         movie_details = {
             'new_moviename': new_moviename,
             'new_filename': new_filename,
