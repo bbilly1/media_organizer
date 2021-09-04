@@ -234,13 +234,20 @@ class MovieIdentify:
         year_dedected = result['release_date'].split('-')[0]
         name_dedected = result['title']
         new_moviename = f'{name_dedected} ({year_dedected})'
-        new_filename = f'{new_moviename}{file_ext}'
+        cleaned_name = self.name_cleaner(name_dedected)
+        new_filename = f'{cleaned_name}{file_ext}'
         movie_details = {
             'new_moviename': new_moviename,
             'new_filename': new_filename,
             'year_dedected': year_dedected
         }
         return movie_details
+
+    @staticmethod
+    def name_cleaner(name_dedected):
+        """ replace problematic characters in filename """
+        cleaned_name = name_dedected.replace('/', '-')
+        return cleaned_name
 
 
 def main():
