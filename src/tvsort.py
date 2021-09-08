@@ -140,6 +140,8 @@ class Episode:
         filename = self.filename
         season, episode, season_id, id_style = Static.split_file_name(filename)
         showname = filename.split(season_id)[0]
+        if 'aka' in showname.lower().split():
+            showname = showname.lower().split('aka')[0]
         # build file_parsed dict
         file_parsed = {
             'season': season,
