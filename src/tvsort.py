@@ -53,9 +53,9 @@ class Static:
             season = str(get_s_nr.findall(season_id)[0])
             episode = str(get_s_nr.findall(season_id)[1])
             id_style = 'se'
-        elif re.compile(r'[sS][0-9]{1,3}.?[eE][0-9]{1,3}').findall(filename):
+        elif re.compile(r'[sS][0-9]{1,3}[. ]?[eE][0-9]{1,3}').findall(filename):
             # S01*E01
-            season_id_pattern = re.compile(r'[sS]\d{1,3}.?[eE]\d{1,3}')
+            season_id_pattern = re.compile(r'[sS]\d{1,3}[. ]?[eE]\d{1,3}')
             season_id = season_id_pattern.findall(filename)[0]
             get_s_nr = re.compile(r'[0-9]{1,3}')
             season = str(get_s_nr.findall(season_id)[0])
