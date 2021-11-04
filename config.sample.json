@@ -18,7 +18,6 @@
     "ydl_opts": {
         "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
         "merge_output_format": "mkv",
-        "external_downloader": "aria2c",
         "geo_bypass": true
     }
 }

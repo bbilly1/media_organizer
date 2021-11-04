@@ -46,9 +46,9 @@ These are the none standard Python libraries in use in this project:
 * [trash-cli](https://pypi.org/project/trash-cli/)
     * Install on Arch: `sudo pacman -S trash-cli`
     * Install with pip: `pip install trash-cli`
-* [youtube-dl](https://pypi.org/project/youtube_dl/)
-    * Install on Arch: `sudo pacman -S youtube-dl`
-    * Install with pip: `pip install youtube_dl`
+* [yt-dlp](https://pypi.org/project/yt-dlp/)
+    * Install on Arch: `sudo pacman -S yt-dlp`
+    * Install with pip: `pip install yt-dlp`
 * curses
     * Is already installed on most linux based systems.
     * On Windows: `pip install windows-curses`
@@ -77,7 +77,7 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 
 #### ydl_opts *Trailer download:*  
 *optional:* remove the 'ydl_opts' key from config.json to disable the trailer download functionality.  
-Arguments under the [ydl_opts] section will get passed in to youtube-dl for *trailers*. Check out the documentation for details.
+Arguments under the [ydl_opts] section will get passed in to yt-dlp for *trailers*. Check out the documentation for details.
 
 ## Known limitations:
 Most likely *media_organizer* will fail if there are any files like Outtakes, Extras, Feauturettes, etc in the folder. For these cases, moove/delete them first before running *media_organizer*.  

@@ -6,7 +6,7 @@ import re
 from time import sleep
 
 import requests
-import youtube_dl
+import yt_dlp as youtube_dl
 
 from src.config import get_config
 
