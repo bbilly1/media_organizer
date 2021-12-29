@@ -75,7 +75,7 @@ class Static:
         showname = showname.strip().rstrip('-').rstrip(".").strip().lower()
         year_pattern = re.compile(r'\(?[0-9]{4}\)?')
         year = year_pattern.findall(showname)
-        if year:
+        if year and year[0] != showname:
             showname = showname.replace(year[0], '').replace("..", ".")
         # find acronym
         acronym = [i for i in showname.split(".") if len(i) == 1]
