@@ -32,7 +32,7 @@ Trailers are named in this style, a more flexible solution is in pending:
 ## Fix Movie Names
 Sometimes Emby get's it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
 
-## DB export
+## CSV export
 Export the library to csv files. Calles the Emby API to get a list of movies and episodes and exports this to a convenient set ov CSV files.
 
 ## setup

@@ -287,7 +287,7 @@ class ListParser:
 
 def main():
     """ main to regenerate csv files """
-    print('recreating db files')
+    print('recreating csv files')
     # stop if scan in progress
     lib_state = EmbyLibrary()
     if not lib_state.ready:

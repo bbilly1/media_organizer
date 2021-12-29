@@ -55,11 +55,11 @@ class Interface:
     def build_menu(self):
         """ build the menu based on availabe keys in config file """
         menu = ['All', 'Movies', 'TV shows', 'Trailer download',
-                'Fix Movie Names', 'DB export', 'Exit']
+                'Fix Movie Names', 'CSV export', 'Exit']
         config_keys = self.CONFIG.keys()
         if 'emby' not in config_keys:
             menu.remove('Fix Movie Names')
-            menu.remove('DB export')
+            menu.remove('CSV export')
         if 'ydl_opts' not in config_keys:
             menu.remove('Trailer download')
         return menu
@@ -144,7 +144,7 @@ class Interface:
             trailers.main()
         elif menu_item == 'Fix Movie Names':
             id_fix.main()
-        elif menu_item == 'DB export':
+        elif menu_item == 'CSV export':
             db_export.main()
 
     def print_menu(self, current_row_idx):
