@@ -236,7 +236,7 @@ class Episode:
 
     def multi_parser(self, show_id):
         """ parse multi episode files names for get_episode_name() """
-        file_parsed = self.filename
+        file_parsed = self.file_parsed
         season = file_parsed['season']
         episode_list = file_parsed['episode'].split()
         # loop through all episodes
