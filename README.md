@@ -1,4 +1,4 @@
-![banner.jpg](assets/media-organizer-banner.png?raw=true "Title")  
+![banner.jpg](assets/media-organizer-banner.png?raw=true "Media Organizer Banner")  
 
 # media_organizer
 *A set of python scripts to rename movies and tv shows.*
@@ -6,40 +6,40 @@
 This project is used and tested under Linux and is ideal to be used from something like a Raspberry Pi or a Linux based NAS. If you want to help me to get it to work under Windows, please contribute.
 
 ## Run
-Clone the repo, setup config file (see below) and run `interface.py`. Use your arrowkeys no navigate up and down the menu.  
+Clone the repo, setup config file (see below) and run `interface.py`. Use your arrow keys to navigate up and down the menu.  
 * **q** quit the interface
-* **r** refresh the pending items by rescanning the filesystem.
+* **r** refresh the pending items by rescanning the file system.
 
 ## Movies
-Detect movie names by querying [themoviedb.org](https://www.themoviedb.org/) API and renaming the file based on a selection of possible matches. Follow the config file instructions bellow to get your API key.
+Detect movie names by querying [themoviedb.org](https://www.themoviedb.org/) API and renaming the file based on a selection of possible matches. Follow the config file instructions below to get your API key.
 
 All data is courtesy of [The Movie Database](https://www.themoviedb.org), please contribute to this excellent database.
 
-Movies will get renamed to this nameing style, a more flexible solution is in pending:  
-**{movie-name} {Year}/{movie-name} {Year}.{ext}**
+Movies will get renamed to this naming style:  
+**{movie-name} ({Year})/{movie-name} ({Year}).{ext}**
 
 ## TV shows
-Detect tv show filenames by querying the publicly available [tvmaze.com](https://www.tvmaze.com/) API to identify the show name and the episode name based on a selection of possible matches.
+Detect tv show filenames by querying the publicly available [tvmaze.com](https://www.tvmaze.com/) API to identify the show name and the episode name based on a selection of possible matches. Please contribute to this excellent database. 
 
-Episodes are named in this style, a more flexible solution is in pending:  
+Episodes are named with this template:  
 **{show-name}/Season {nr}/show-name - S{nr}E{nr} - {episode-name}.{ext}**
 
 ## Trailer download
-Downloading trailers from links provided from emby and move them into the movie folder.  
-Trailers are named in this style, a more flexible solution is in pending:  
+Download trailers from links provided from emby and move them into the movie folder.  
+Trailers are named with this template:  
 **{movie-name} {Year}_{youtube-id}_trailer.mkv**
 
 ## Fix Movie Names
-Sometimes Emby get's it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
+Sometimes Emby gets it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
 
 ## CSV export
-Export the library to csv files. Calles the Emby API to get a list of movies and episodes and exports this to a convenient set ov CSV files.
+Export the library to csv files. Calles the Emby API to get a list of movies and episodes and exports this to a convenient set of CSV files.
 
 ## setup
 Needs Python >= 3.6 to run.
 
 ### install requirements
-These are the none standard Python libraries in use in this project:
+These are the non standard Python libraries in use in this project:
 * [requests](https://pypi.org/project/requests/)
     * Install on Arch: `sudo pacman -S python-requests`
     * Install with pip: `pip install requests`
@@ -61,13 +61,13 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 #### media
 * `tv_downpath`: Folder path where the tv episodes get downloaded to.
 * `movie_downpath`: Folder path where the movie files get downloaded to.
-* `sortpath`: Empty folder the media_organizer can use as a temporary sort path.
+* `sortpath`: Empty folder that can be used by *media_organizer* as a temporary sort path.
 * `moviepath`: Root folder where the organized movie files will go.
 * `tvpath`: Root folder where the organized tv episodes will go.
-* `ext`: A list of valid media file extensions to easily filter out none media related files.
-* `log_path`: Path to a folder to output all renaming done to keep track and check for any errors and safe csv files.
+* `ext`: A list of valid media file extensions to easily filter out non-media related files.
+* `log_path`: Path to a folder to output all renaming done to keep track, check for any errors and safe csv files.
 * `movie_db_api`: Register and get your themoviedb.com **API Key (v3 auth)** acces from [here](https://www.themoviedb.org/settings/api).
-* `min_file_size`: Minimal filesize to be considered a relevant media file in bytes.  
+* `min_file_size`: Minimal file size to be considered a relevant media file in bytes.  
 
 #### Emby integration
 *optional:* remove the 'emby' key from config.json to disable the emby integration. 
@@ -80,4 +80,4 @@ Duplicate the config.sample.json file to a file named *config.json* and set the 
 Arguments under the [ydl_opts] section will get passed in to yt-dlp for *trailers*. Check out the documentation for details.
 
 ## Known limitations:
-Most likely *media_organizer* will fail if there are any files like Outtakes, Extras, Feauturettes, etc in the folder. For these cases, moove/delete them first before running *media_organizer*.  
+Most likely *media_organizer* will fail if there are any files like Outtakes, Extras, Featurettes, etc in the folder. For these cases, move/delete them first before running *media_organizer*.  
