@@ -3,6 +3,8 @@
 # media_organizer
 *A set of python scripts to rename movies and tv shows.*
 
+![screenshot.jpg](assets/media-organizer-screenshot.png?raw=true "Media Organizer Screenshot") 
+
 This project is used and tested under Linux and is ideal to be used from something like a Raspberry Pi or a Linux based NAS. If you want to help me to get it to work under Windows, please contribute.
 
 ## Run
