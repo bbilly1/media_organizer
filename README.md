@@ -29,7 +29,7 @@ Episodes are named with this template:
 ## Trailer download
 Download trailers from links provided from emby and move them into the movie folder.  
 Trailers are named with this template:  
-**{movie-name} {Year}_{youtube-id}_trailer.mkv**
+**{movie-name} ({Year})_{youtube-id}_trailer.mkv**
 
 ## Fix Movie Names
 Sometimes Emby gets it wrong. Sometimes this script can get it wrong too. The *Fix Movie Names* function goes through the movie library looking for filenames that don't match with the movie name as identified in emby.
